@@ -38,5 +38,5 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @veya/extension build
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @veya/extension exec playwright install --with-deps chromium
       - run: node apps/extension/scripts/smoke.mjs
