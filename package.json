@@ -1,0 +1,25 @@
+{
+  "name": "veya",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Veya — Your career, already understood. A privacy-first AI career assistant for the browser.",
+  "packageManager": "pnpm@11.12.0",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:ext": "pnpm --filter @veya/extension test",
+    "test:web": "pnpm --filter @veya/website test",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.9",
+    "typescript": "^7.0.2"
+  }
+}
