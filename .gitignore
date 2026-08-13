@@ -33,3 +33,5 @@ pnpm-debug.log*
 *.zip
 *.crx
 apps/extension/resources/icons/
+apps/extension/.e2e-dist/
+apps/extension/.e2e.log

@@ -1,29 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { brand, Wordmark } from "@veya/shared";
-import type { DetectedField } from "@veya/core";
-import type { Request, Response } from "../shared/messages.js";
-import { Button, Card, EmptyState, Pill, Spinner, type StatusTone } from "../ui/components.js";
-
-interface DecisionView {
-  action: "fill" | "generate" | "ask";
-  value?: string;
-  source: string;
-  confidence: string;
-  reason: string;
-}
-
-interface FieldView {
-  field: DetectedField;
-  decision: DecisionView;
-  edited?: string;
-}
-
-interface ScanView {
-  url: string;
-  title: string;
-  fields: DetectedField[];
-  plan: FieldView[];
-}
+import type { GenerateOutcome, PlanEntry, Request, Response, ScanState } from "../shared/messages.js";
+import { Button, Card, EmptyState, Pill, type StatusTone } from "../ui/components.js";
 
 type Status = { provider: string; model?: string; healthy: boolean } | null;
 
@@ -50,12 +28,17 @@ const toneFor = (action: string): StatusTone =>
 const actionLabel = (a: string): string =>
   a === "fill" ? "Ready" : a === "generate" ? "Draft" : "Review";
 
+function entryValue(p: PlanEntry): string {
+  return (p.draft ?? p.edited ?? p.decision.value ?? "").toString();
+}
+
 export function SidePanel() {
   const [status, setStatus] = useState<Status>(null);
-  const [scan, setScan] = useState<ScanView | null>(null);
+  const [scan, setScan] = useState<ScanState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fillResult, setFillResult] = useState<{ ok: number; failed: number } | null>(null);
+  const [drafting, setDrafting] = useState<string | null>(null);
 
   useEffect(() => {
     void send<Status>({ kind: "status" }).then(setStatus).catch(() => setStatus(null));
@@ -66,7 +49,7 @@ export function SidePanel() {
     setError(null);
     setFillResult(null);
     try {
-      const s = await send<ScanView>({ kind: "scan" });
+      const s = await send<ScanState>({ kind: "scan" });
       setScan(s);
     } catch (e) {
       setError((e as Error).message);
@@ -86,16 +69,34 @@ export function SidePanel() {
     void send({ kind: "setValue", elementId, value }).catch(() => undefined);
   }, []);
 
+  const draft = useCallback(async (p: PlanEntry) => {
+    setDrafting(p.field.elementId);
+    setError(null);
+    try {
+      const out = await send<GenerateOutcome>({ kind: "generate", field: p.field });
+      setScan((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          plan: prev.plan.map((e) =>
+            e.field.elementId === p.field.elementId ? { ...e, draft: out.text, edited: out.text } : e,
+          ),
+        };
+      });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setDrafting(null);
+    }
+  }, []);
+
   const fill = useCallback(async () => {
     if (!scan) return;
     setBusy(true);
     setError(null);
     const answers = scan.plan
-      .filter((p) => {
-        const v = p.edited ?? p.decision.value;
-        return v !== undefined && v.trim().length > 0;
-      })
-      .map((p) => ({ elementId: p.field.elementId, value: (p.edited ?? p.decision.value) as string }));
+      .filter((p) => entryValue(p).trim().length > 0)
+      .map((p) => ({ elementId: p.field.elementId, value: entryValue(p) }));
     try {
       const results = await send<Array<{ elementId: string; ok: boolean }>>({ kind: "fill", answers });
       const ok = results.filter((r) => r.ok).length;
@@ -109,17 +110,13 @@ export function SidePanel() {
 
   const grouped = useMemo(() => {
     if (!scan) return null;
-    const groups: Record<string, FieldView[]> = { fill: [], generate: [], ask: [] };
+    const groups: Record<string, PlanEntry[]> = { fill: [], generate: [], ask: [] };
     for (const p of scan.plan) groups[p.decision.action]?.push(p);
     return groups;
   }, [scan]);
 
   const totalFillable = useMemo(
-    () =>
-      scan?.plan.filter((p) => {
-        const v = p.edited ?? p.decision.value;
-        return v !== undefined && v.trim().length > 0;
-      }).length ?? 0,
+    () => scan?.plan.filter((p) => entryValue(p).trim().length > 0).length ?? 0,
     [scan],
   );
 
@@ -147,7 +144,10 @@ export function SidePanel() {
       ) : (
         <>
           <div className="sp-page">
-            <span className="sp-page-title">{scan.title || "This page"}</span>
+            <span className="sp-page-title">
+              {scan.job.role ? `${scan.job.role}` : scan.title || "This page"}
+              {scan.job.company ? ` at ${scan.job.company}` : ""}
+            </span>
             <span className="sp-page-url">{scan.url}</span>
           </div>
 
@@ -162,7 +162,7 @@ export function SidePanel() {
                     <span className="sp-section-count">{items.length}</span>
                   </div>
                   {items.map((p) => {
-                    const value = p.edited ?? p.decision.value ?? "";
+                    const value = entryValue(p);
                     return (
                       <div className="sp-field" key={p.field.elementId}>
                         <div className="sp-field-top">
@@ -179,6 +179,11 @@ export function SidePanel() {
                           onChange={(e) => onEdit(p.field.elementId, e.target.value)}
                           spellCheck={false}
                         />
+                        {p.decision.action === "generate" ? (
+                          <Button variant="ghost" size="sm" onClick={() => void draft(p)} disabled={drafting !== null}>
+                            {drafting === p.field.elementId ? "Drafting…" : p.draft ? "Regenerate" : "Draft with AI"}
+                          </Button>
+                        ) : null}
                       </div>
                     );
                   })}
@@ -208,7 +213,7 @@ export function SidePanel() {
             </div>
           )}
           <Button variant="primary" full onClick={fill} disabled={busy || totalFillable === 0} loading={busy}>
-            {busy ? <Spinner /> : `Fill ${totalFillable} field${totalFillable === 1 ? "" : "s"}`}
+            {`Fill ${totalFillable} field${totalFillable === 1 ? "" : "s"}`}
           </Button>
         </div>
       )}

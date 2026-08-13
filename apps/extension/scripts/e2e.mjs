@@ -1,5 +1,5 @@
 import { chromium } from "@playwright/test";
-import { cpSync, mkdirSync, rmSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, rmSync, readFileSync, writeFileSync, appendFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,10 +7,16 @@ import { fileURLToPath } from "node:url";
 const dir = fileURLToPath(new URL(".", import.meta.url));
 const dist = resolve(dir, "..", "dist");
 const testDist = resolve(dir, "..", ".e2e-dist");
-const iconDir = resolve(testDist, "icons");
+const logFile = resolve(dir, "..", ".e2e.log");
+
+const log = (...a) => {
+  const line = `${new Date().toISOString().slice(11, 19)} ${a.join(" ")}\n`;
+  appendFileSync(logFile, line);
+  process.stdout.write(line);
+};
 
 rmSync(testDist, { recursive: true, force: true });
-mkdirSync(iconDir, { recursive: true });
+mkdirSync(resolve(testDist, "icons"), { recursive: true });
 cpSync(dist, testDist, { recursive: true });
 
 const manifest = JSON.parse(readFileSync(resolve(dist, "manifest.json"), "utf8"));
@@ -19,7 +25,8 @@ if (!manifest.permissions.includes("tabs")) manifest.permissions.push("tabs");
 writeFileSync(resolve(testDist, "manifest.json"), JSON.stringify(manifest, null, 2));
 
 const fixture = `<!doctype html><html><body>
-  <h1>Acme — Senior Engineer</h1>
+  <h1>Acme Corporation — Senior Software Engineer — San Francisco</h1>
+  <p>Acme builds developer infrastructure. We are hiring a senior engineer to work on our Rust core platform.</p>
   <form id="app-form">
     <label for="first_name">First name</label>
     <input id="first_name" name="first_name" required />
@@ -52,6 +59,7 @@ const server = createServer((req, res) => {
   res.end(fixture);
 });
 await new Promise((r) => server.listen(4173, "127.0.0.1", r));
+log("server up");
 
 const browser = await chromium.launchPersistentContext("", {
   channel: "chromium",
@@ -59,69 +67,86 @@ const browser = await chromium.launchPersistentContext("", {
   args: [`--disable-extensions-except=${testDist}`, `--load-extension=${testDist}`, "--no-sandbox"],
 });
 
-const sw = await browser.waitForEvent("serviceworker", { timeout: 10000 });
+const sw = await browser.waitForEvent("serviceworker", { timeout: 15000 });
 const origin = sw.url().split("/")[2];
-console.log("sw origin:", origin);
+log("sw:", origin);
 
-const page = await browser.newPage();
-await page.goto("http://localhost:4173/");
-await page.waitForLoadState("domcontentloaded");
+const formPage = await browser.newPage();
+await formPage.goto("http://localhost:4173/");
+await formPage.waitForLoadState("domcontentloaded");
+log("form page loaded");
 
-const cdp = await page.context().newCDPSession(page);
-await cdp.send("Target.getTargetInfo");
+const panel = await browser.newPage();
+await panel.goto(`chrome-extension://${origin}/sidepanel.html`);
+await panel.waitForLoadState("domcontentloaded");
+log("panel loaded");
 
-// Resolve the numeric tab id from inside the service worker.
-const getTabId = await sw.evaluate(async () => {
-  const tabs = await chrome.tabs.query({});
-  const t = tabs.find((x) => x.url?.startsWith("http://localhost:4173"));
-  return t?.id ?? null;
+await formPage.bringToFront();
+await new Promise((r) => setTimeout(r, 500));
+log("form page to front");
+
+await panel.evaluate(async () => {
+  await chrome.storage.local.set({ "veya.config.v1": { provider: "ollama", model: "llama3.2:1b" } });
+  const p = {
+    version: 1,
+    identity: { firstName: "Ada", lastName: "Lovelace" },
+    contact: { email: "ada@example.com", linkedinUrl: "https://linkedin.com/in/ada" },
+    experience: [
+      { id: "exp1", company: "Analytical Engines", title: "Staff Engineer", current: true, bullets: ["Led the Rust core platform rewrite."], technologies: ["Rust", "TypeScript"] },
+    ],
+    skills: [{ name: "Rust", level: "expert" }, { name: "TypeScript", level: "advanced" }],
+    preferences: { desiredRoles: ["Senior Software Engineer"], employmentTypes: ["full-time"], sponsorshipRequired: false },
+    savedAnswers: [],
+    writingStyle: { tone: ["professional"], lengthPreference: "concise", avoid: [] },
+    documents: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+  await chrome.storage.local.set({ "veya.profile.v1": p });
 });
-const tabId = getTabId;
-console.log("tabId:", tabId);
+log("config + profile seeded");
 
-// Real background path: executeScript (isolated world) + tabs.sendMessage.
-const inject = await sw.evaluate(async (o) => {
-  await chrome.scripting.executeScript({ target: { tabId: o.tabId }, files: ["content.js"] });
-  return "injected";
-}, { tabId });
-console.log("inject:", inject);
+const msg = (page, m, timeout = 120000) =>
+  Promise.race([
+    page.evaluate((mm) => chrome.runtime.sendMessage(mm), m),
+    new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout: ${m.kind}`)), timeout)),
+  ]);
 
-const scan = await sw.evaluate(
-  async (o) => {
-    const res = await chrome.tabs.sendMessage(o.tabId, { kind: "scanRequest" });
-    return { ok: res.ok, fields: res.fields };
-  },
-  { tabId },
-);
-console.log("scan ok:", scan.ok, "fields:", scan.fields?.length ?? 0);
-for (const f of scan.fields ?? []) {
-  console.log(`  ${f.normalized} [${f.type}] "${f.label}"${f.required ? " *" : ""}`);
+log("sending scan…");
+const scan = await msg(panel, { kind: "scan" }, 180000);
+log("scan ok:", scan.ok, "job:", JSON.stringify(scan.result?.job));
+const plan = scan.result?.plan ?? [];
+log("plan size:", plan.length);
+for (const p of plan) {
+  log(`  ${p.decision.action.padEnd(8)} ${p.field.normalized} "${p.field.label}" — ${p.decision.reason}`);
 }
 
-const answers = (scan.fields ?? [])
-  .filter((f) => ["FIRST_NAME", "LAST_NAME", "EMAIL", "LINKEDIN_URL"].includes(f.normalized))
-  .map((f) => ({
-    elementId: f.elementId,
-    value: f.normalized === "FIRST_NAME" ? "Ada" : f.normalized === "LAST_NAME" ? "Lovelace" : f.normalized === "EMAIL" ? "ada@example.com" : "https://linkedin.com/in/ada",
-  }));
+const genField = plan.find((p) => p.decision.action === "generate");
+if (genField) {
+  log("sending generate…");
+  const gen = await msg(panel, { kind: "generate", field: genField.field }, 180000);
+  log("generate ok:", gen.ok, "draft:", (gen.result?.text ?? gen.error ?? "").slice(0, 100).replace(/\n/g, " "));
+  for (const p of plan) if (p.field.elementId === genField.field.elementId) p.edited = gen.result?.text ?? "";
+} else {
+  log("no generate field found");
+}
 
-const fill = await sw.evaluate(
-  async (o) => {
-    const res = await chrome.tabs.sendMessage(o.tabId, { kind: "fillRequest", answers: o.answers });
-    return { ok: res.ok, results: res.results };
-  },
-  { tabId, answers },
-);
-console.log("fill ok:", fill.ok, JSON.stringify(fill.results));
+const answers = plan
+  .map((p) => ({ elementId: p.field.elementId, value: (p.edited ?? p.decision.value ?? "").toString() }))
+  .filter((a) => a.value.trim().length > 0);
+log("fill answers:", answers.length);
+const fill = await msg(panel, { kind: "fill", answers }, 30000);
+log("fill ok:", fill.ok, JSON.stringify(fill.result));
 
-const values = await page.evaluate(() => ({
+const values = await formPage.evaluate(() => ({
   first: document.getElementById("first_name").value,
   last: document.getElementById("last_name").value,
   email: document.getElementById("email").value,
-  linkedin: document.getElementById("linkedin").value,
+  company: document.getElementById("company").value,
+  why: document.getElementById("why").value.slice(0, 60),
 }));
-console.log("DOM:", JSON.stringify(values));
+log("DOM:", JSON.stringify(values));
 
 await browser.close();
 server.close();
-console.log("e2e complete");
+log("e2e complete");

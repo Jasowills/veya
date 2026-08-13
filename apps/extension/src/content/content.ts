@@ -30,6 +30,15 @@ function currentRoot(): HTMLElement | undefined {
   return target ?? document.body;
 }
 
+function pageText(maxChars = 6000): string {
+  const root = document.body;
+  if (!root) return "";
+  const text = (root.innerText ?? root.textContent ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.slice(0, maxChars);
+}
+
 function scan(): DetectedField[] {
   const root = currentRoot();
   return root ? scanner.scan(root) : [];
@@ -41,6 +50,16 @@ function send(msg: C2B): void {
   } catch {
     // Background not reachable; ignore.
   }
+}
+
+function announce(fields: DetectedField[]): void {
+  send({
+    kind: "scanResult",
+    fields,
+    url: location.href,
+    title: document.title,
+    pageText: pageText(),
+  });
 }
 
 function trySetValue(elementId: string, value: string): boolean {
@@ -61,8 +80,9 @@ chrome.runtime.onMessage.addListener((msg: B2C, _sender, sendResponse) => {
   }
   if (msg.kind === "scanRequest") {
     const fields = scan();
-    send({ kind: "scanResult", fields, url: location.href, title: document.title });
-    sendResponse({ ok: true, fields, url: location.href, title: document.title });
+    const text = pageText();
+    send({ kind: "scanResult", fields, url: location.href, title: document.title, pageText: text });
+    sendResponse({ ok: true, fields, url: location.href, title: document.title, pageText: text });
     return;
   }
   if (msg.kind === "fillRequest") {

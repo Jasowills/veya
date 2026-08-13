@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Next: Phase 11 (application intelligence in extension) and Phase 12 (document engine).
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Next: Phase 12 (document engine), with Phase 11's in-extension UI/panel flow partially landed (logic extracted + unit-tested; panel ⇄ SW routing needs a real-browser pass).
 
 ## Overall Status
 
@@ -19,7 +19,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 8 (Form intelligence) — COMPLETE (16 tests, realm-agnostic DOM)
 - Phase 9 (AI provider architecture) — COMPLETE (Ollama live-tested)
 - Phase 10 (Prompt system & context engine) — COMPLETE (5+9+11 tests)
-- Phase 11 (Application intelligence) — PENDING
+- Phase 11 (Application intelligence) — PARTIAL (extension orchestration logic extracted to `src/background/logic.ts`, unit-tested; background handles analyzeJob/generate/profile flows; side panel shows job context + AI draft button. Panel ⇄ SW routing not yet verified in a real browser — headless Playwright cannot deliver page→SW messages)
 - Phase 12 (Document engine) — PENDING
 - Phase 13 (Landing page) — PENDING
 - Phase 14 (CLI & local companion) — PENDING
@@ -42,6 +42,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - @veya/ai: context selector (category → minimal verified subset; demographic/legal get zero profile data), DecisionEngine (fill/preference/saved-answer/derive/generate/ask with saved-answer token matching), AnswerGenerator (provider+prompt orchestration, injection gate), JSON block extractor. 11 tests.
 - @veya/form-engine: keyword normalization (longest-match scoring, camelCase/underscore handling), realm-agnostic DOM scanning (labels/aria/legend/heading/select options/radio groups), React-compatible value setting via native prototype setters + bubbled events. 16 tests.
 - @veya/extension (MV3, `apps/extension`): minimal permissions (`storage`, `activeTab`, `scripting`, `sidePanel`; host_permissions only `localhost:11434`). Side panel is the primary UI (`openPanelOnActionClick`), options page for provider/model/API-key config, on-demand content-script injection via `chrome.scripting` (no broad `content_scripts`). Message protocol content ↔ service worker ↔ UI defined in `src/shared/messages.ts`. Background orchestrates scan → plan (DecisionEngine per field) → fill. Vite split into three sequential builds (UI HTML entries, content IIFE, background ESM) — Vite 8 dropped array configs. Icons rendered from `logo.svg` via Playwright at 16/32/48/128 into `resources/icons`, copied by `scripts/finalize.mjs`. Verified in real Chromium: manifest loads, SW starts, side panel renders, and an e2e run (test-manifest with `http://localhost/*` + `tabs`) scans a 9-field fixture form (correct normalizations incl. WORK_AUTHORIZATION/SPONSORSHIP_REQUIRED/AVAILABILITY) and fills 4 fields into the live DOM.
+- Phase 11 extension logic: `src/background/logic.ts` holds the pure, chrome-free functions `jobFromHeuristics` (title/URL → company/role, drops job-board subdomains like `careers.`), `buildPlan` (DecisionEngine per field → FieldDecision), and `fillableAnswers` (edited > draft > decision). Background service worker wires them to `analyzeJob` (AI, heuristic fallback), `generateAnswer` (DecisionEngine gate → AnswerGenerator with job context), and profile handlers (get/save/export/import). Side panel renders job context + AI-draft buttons; options page gained a tabbed `ProfileEditor` (basics/experience/skills/preferences) with import/export. 8 unit tests.
 
 ## In Progress
 
@@ -50,7 +51,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 
 ## Blocked
 
-None.
+- Phase 11 extension e2e: in Playwright HEADLESS Chromium, `chrome.runtime.sendMessage` from an extension page (side panel) to the MV3 service worker never delivers — even an echo listener registered inside the worker is never invoked. SW→tab messaging works headless (that path is e2e-covered). Page→SW routing must be verified in a real (headed) Chrome session before the panel flow can be called done. Diagnostic script: `apps/extension/scripts/swprobe.mjs`.
 
 ## Decisions
 
@@ -83,6 +84,7 @@ None.
 - `rootDir` conflicts when typecheck includes external workspace sources → split `tsconfig.json` (build) vs `tsconfig.typecheck.json` (rootDir=repo root, noEmit).
 - Vite 8 no longer accepts array config exports → extension uses three sequential `--config` builds.
 - Extension background/UI flow is functional but the side panel's fill plan is not yet persisted across page navigations (in-memory `scanState`).
+- Playwright headless cannot deliver page→SW runtime messages for MV3 extensions (panel flow unverifiable headless; SW→tab path works).
 
 ## Unverified Assumptions
 
@@ -99,10 +101,11 @@ None.
 - Unit tests: profile 8/8, security 9/9, prompts 5/5, providers live 3/3 (VEYA_OLLAMA_TEST=1), ai 11/11, form-engine 16/16 → OK.
 - Extension smoke (`scripts/smoke.mjs`): extension loads in headless Chromium, service worker starts, side panel renders → OK.
 - Extension e2e (`scripts/e2e.mjs`, test manifest): 9-field fixture scan with correct normalization, 4-field fill verified in live DOM → OK.
+- Extension unit (`pnpm --filter @veya/extension test:unit`): 8/8 logic tests (jobFromHeuristics, buildPlan, fillableAnswers) → OK.
 
 ## Next Steps
 
-1. Phase 11: extension application session — AI job analysis (`analyzeJob`), answer generation behind a provider-health gate, saved-answer flow, review UI, persistence of sessions to `chrome.storage.session`.
+1. Verify panel ⇄ SW routing + Phase 11 UI flow in a real (headed) Chrome session; then mark Phase 11 COMPLETE.
 2. Phase 12: `packages/document-engine` (resume parse via `pdf-parse@2`, cover-letter compositing, PDF generation).
 3. Phase 13: `apps/website` landing page (frontend-design / impeccable).
 4. Phase 14: `apps/cli` + `veya doctor`.

@@ -6,7 +6,8 @@
  * the content script owns the DOM and exposes only stable element ids.
  */
 
-import type { DetectedField } from "@veya/core";
+import type { DetectedField, QuestionCategory } from "@veya/core";
+import type { CareerProfile } from "@veya/profile";
 
 /** Runtime config the user has set in options. */
 export interface RuntimeConfig {
@@ -17,6 +18,37 @@ export interface RuntimeConfig {
   apiKey?: string;
 }
 
+export interface FieldDecision {
+  action: "fill" | "generate" | "ask";
+  value?: string;
+  source: string;
+  confidence: string;
+  reason: string;
+}
+
+export interface PlanEntry {
+  field: DetectedField;
+  decision: FieldDecision;
+  edited?: string;
+  draft?: string;
+}
+
+export interface JobContext {
+  company?: string;
+  role?: string;
+  location?: string;
+  description?: string;
+  employmentType?: string;
+}
+
+export interface ScanState {
+  url: string;
+  title: string;
+  job: JobContext;
+  fields: DetectedField[];
+  plan: PlanEntry[];
+}
+
 /** Messages from the UI → background. */
 export type Request =
   | { kind: "scan" }
@@ -24,8 +56,13 @@ export type Request =
   | { kind: "fill"; answers: Array<{ elementId: string; value: string }> }
   | { kind: "context" }
   | { kind: "decide"; field: DetectedField }
+  | { kind: "generate"; field: DetectedField; tone?: string }
   | { kind: "status" }
-  | { kind: "openOptions" };
+  | { kind: "openOptions" }
+  | { kind: "getProfile" }
+  | { kind: "saveProfile"; profile: CareerProfile }
+  | { kind: "exportProfile" }
+  | { kind: "importProfile"; json: string };
 
 export type Response =
   | { ok: true; result: unknown }
@@ -33,10 +70,15 @@ export type Response =
 
 /** Content script ⇄ background handshake. */
 export type C2B =
-  | { kind: "scanResult"; fields: DetectedField[]; url: string; title: string }
+  | { kind: "scanResult"; fields: DetectedField[]; url: string; title: string; pageText: string }
   | { kind: "fillResult"; results: Array<{ elementId: string; ok: boolean }> };
 
 export type B2C =
   | { kind: "ping" }
   | { kind: "scanRequest" }
   | { kind: "fillRequest"; answers: Array<{ elementId: string; value: string }> };
+
+export interface GenerateOutcome {
+  text: string;
+  needsInput?: boolean;
+}

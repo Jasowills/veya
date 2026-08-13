@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Wordmark } from "@veya/shared";
-import type { RuntimeConfig } from "../shared/messages.js";
+import type { CareerProfile } from "@veya/profile";
+import type { Request, Response, RuntimeConfig } from "../shared/messages.js";
 import { Button, Card } from "../ui/components.js";
+import { ProfileEditor } from "./ProfileEditor.js";
 
 const PROVIDERS: Array<{ id: RuntimeConfig["provider"]; name: string; needsKey: boolean; defaultBase?: string }> = [
   { id: "ollama", name: "Ollama (local)", needsKey: false, defaultBase: "http://localhost:11434" },
@@ -13,9 +15,9 @@ const PROVIDERS: Array<{ id: RuntimeConfig["provider"]; name: string; needsKey: 
   { id: "lmstudio", name: "LM Studio (local)", needsKey: false, defaultBase: "http://localhost:1234/v1" },
 ];
 
-function send<T>(msg: { kind: "status" }): Promise<T> {
+function send<T>(msg: Request): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    chrome.runtime.sendMessage(msg, (res: { ok: boolean; result?: unknown; error?: string }) => {
+    chrome.runtime.sendMessage(msg, (res: Response | undefined) => {
       const err = chrome.runtime.lastError;
       if (err) return reject(new Error(err.message));
       if (!res?.ok) return reject(new Error(res?.error ?? "Veya failed to respond."));
@@ -27,8 +29,11 @@ function send<T>(msg: { kind: "status" }): Promise<T> {
 export function Options() {
   const [config, setConfig] = useState<RuntimeConfig>({ provider: "ollama", model: "" });
   const [status, setStatus] = useState<{ provider: string; model?: string; healthy: boolean } | null>(null);
+  const [profile, setProfile] = useState<CareerProfile | null>(null);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     void (async () => {
@@ -37,6 +42,7 @@ export function Options() {
       setConfig({ ...c });
       setLoading(false);
       void refreshStatus();
+      void loadProfile();
     })();
   }, []);
 
@@ -49,6 +55,15 @@ export function Options() {
     }
   }, []);
 
+  const loadProfile = useCallback(async () => {
+    try {
+      const p = await send<CareerProfile>({ kind: "getProfile" });
+      setProfile(p);
+    } catch {
+      setProfile(null);
+    }
+  }, []);
+
   const save = useCallback(async () => {
     setSaved(false);
     await chrome.storage.local.set({ "veya.config.v1": config });
@@ -57,7 +72,48 @@ export function Options() {
     setTimeout(() => setSaved(false), 1500);
   }, [config, refreshStatus]);
 
-  const provider = PROVIDERS.find((p) => p.id === config.provider);
+  const saveProfile = useCallback(async () => {
+    if (!profile) return;
+    try {
+      await send({ kind: "saveProfile", profile });
+      setNotice("Profile saved to this browser.");
+    } catch (e) {
+      setNotice(`Could not save: ${(e as Error).message}`);
+    }
+    setTimeout(() => setNotice(null), 3000);
+  }, [profile]);
+
+  const exportProfile = useCallback(async () => {
+    try {
+      const json = await send<string>({ kind: "exportProfile" });
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "veya-profile.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setNotice(`Export failed: ${(e as Error).message}`);
+    }
+  }, []);
+
+  const importProfile = useCallback(
+    async (file: File) => {
+      const json = await file.text();
+      try {
+        await send({ kind: "importProfile", json });
+        await loadProfile();
+        setNotice("Profile imported.");
+      } catch (e) {
+        setNotice(`Import failed: ${(e as Error).message}`);
+      }
+      setTimeout(() => setNotice(null), 3000);
+    },
+    [loadProfile],
+  );
+
+  const provider = PROVIDERS.find((pr) => pr.id === config.provider);
 
   return (
     <div className="op-root">
@@ -67,6 +123,8 @@ export function Options() {
           {saved ? "Saved" : "Save settings"}
         </Button>
       </header>
+
+      {notice ? <div className="op-status">{notice}</div> : null}
 
       {status ? (
         <div className={`op-status ${status.healthy ? "op-healthy" : "op-down"}`}>
@@ -88,9 +146,9 @@ export function Options() {
             value={config.provider}
             onChange={(e) => setConfig({ ...config, provider: e.target.value as RuntimeConfig["provider"] })}
           >
-            {PROVIDERS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
+            {PROVIDERS.map((pr) => (
+              <option key={pr.id} value={pr.id}>
+                {pr.name}
               </option>
             ))}
           </select>
@@ -144,6 +202,35 @@ export function Options() {
       </section>
 
       <section className="op-section">
+        <div className="op-row" style={{ justifyContent: "space-between" }}>
+          <h2 className="op-section-title">Career profile</h2>
+          <div className="op-row" style={{ gap: 8 }}>
+            <Button variant="ghost" size="sm" onClick={exportProfile}>
+              Export
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => fileRef.current?.click()}>
+              Import
+            </Button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void importProfile(f);
+                e.target.value = "";
+              }}
+            />
+          </div>
+        </div>
+        <ProfileEditor profile={profile} onChange={setProfile} />
+        <Button variant="primary" onClick={saveProfile} disabled={!profile}>
+          Save profile
+        </Button>
+      </section>
+
+      <section className="op-section">
         <h2 className="op-section-title">Privacy</h2>
         <Card>
           <p className="op-note">
@@ -152,14 +239,6 @@ export function Options() {
             no tracking, no Veya backend, no telemetry.
           </p>
         </Card>
-      </section>
-
-      <section className="op-section">
-        <h2 className="op-section-title">Career profile</h2>
-        <div className="op-profile-empty">
-          Your career profile powers every fill. Import it here or let Veya guide you through building it — everything
-          stays in this browser.
-        </div>
       </section>
     </div>
   );
