@@ -23,7 +23,7 @@ import type {
   RuntimeConfig,
   ScanState,
 } from "../shared/messages.js";
-import { buildPlan, fillableAnswers, jobFromHeuristics } from "./logic.js";
+import { buildPlan, jobFromHeuristics } from "./logic.js";
 
 const storage = new ChromeKVStorage();
 const profileRepo = new ProfileRepository(storage);
@@ -104,8 +104,6 @@ async function handle(req: Request): Promise<unknown> {
       return setFieldValue(req.elementId, req.value);
     case "fill":
       return fillFields(req.answers);
-    case "context":
-      return getContext();
     case "decide":
       return decideField(req.field);
     case "generate":
@@ -187,12 +185,6 @@ async function fillFields(
   };
   if (!res?.ok || !res.results) throw new Error("Fill failed in the content script.");
   return res.results;
-}
-
-async function getContext(): Promise<{ hasProfile: boolean; profileFields: string[] }> {
-  const profile = await getProfile();
-  const names = Object.keys(profile).filter((k) => !["savedAnswers", "preferences"].includes(k));
-  return { hasProfile: Object.keys(profile).length > 0, profileFields: names };
 }
 
 async function buildSettings(): Promise<{ config: RuntimeConfig; provider: ReturnType<typeof buildProvider> }> {

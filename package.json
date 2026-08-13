@@ -14,8 +14,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:unit": "turbo run test:unit",
-    "test:ext": "pnpm --filter @veya/extension test",
-    "test:web": "pnpm --filter @veya/website test",
+    "test:ext": "pnpm --filter @veya/extension run smoke",
+    "test:web": "pnpm --filter @veya/website run test:unit",
     "package": "node scripts/package.mjs",
     "clean": "turbo run clean && rm -rf node_modules"
   },

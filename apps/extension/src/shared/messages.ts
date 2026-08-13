@@ -54,7 +54,6 @@ export type Request =
   | { kind: "scan" }
   | { kind: "setValue"; elementId: string; value: string }
   | { kind: "fill"; answers: Array<{ elementId: string; value: string }> }
-  | { kind: "context" }
   | { kind: "decide"; field: DetectedField }
   | { kind: "generate"; field: DetectedField; tone?: string }
   | { kind: "status" }
