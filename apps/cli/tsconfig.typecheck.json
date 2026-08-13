@@ -4,10 +4,15 @@
     "noEmit": true,
     "rootDir": "../../",
     "paths": {
+      "@veya/ai": ["../../packages/ai/src/index.ts"],
       "@veya/core": ["../../packages/core/src/index.ts"],
+      "@veya/document-engine": ["../../packages/document-engine/src/index.ts"],
+      "@veya/form-engine": ["../../packages/form-engine/src/index.ts"],
       "@veya/profile": ["../../packages/profile/src/index.ts"],
+      "@veya/prompts": ["../../packages/prompts/src/index.ts"],
       "@veya/providers": ["../../packages/providers/src/index.ts"],
-      "@veya/document-engine": ["../../packages/document-engine/src/index.ts"]
+      "@veya/security": ["../../packages/security/src/index.ts"],
+      "@veya/shared": ["../../packages/shared/src/index.ts"]
     }
   },
   "include": ["src", "test"]

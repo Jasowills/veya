@@ -4,7 +4,13 @@
     "noEmit": true,
     "rootDir": "../../",
     "paths": {
+      "@veya/ai": ["../ai/src/index.ts"],
       "@veya/core": ["../core/src/index.ts"],
+      "@veya/document-engine": ["../document-engine/src/index.ts"],
+      "@veya/form-engine": ["../form-engine/src/index.ts"],
+      "@veya/prompts": ["../prompts/src/index.ts"],
+      "@veya/providers": ["../providers/src/index.ts"],
+      "@veya/security": ["../security/src/index.ts"],
       "@veya/shared": ["../shared/src/index.ts"]
     }
   },
