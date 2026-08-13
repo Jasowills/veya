@@ -5,20 +5,20 @@
 
 ## Current Phase
 
-Phase 6 — Career profile engine COMPLETE. Next: Phase 7 (browser extension foundation).
+Phase 7 — Browser extension foundation (MV3 app). AI + form packages complete.
 
 ## Overall Status
 
 - Phase 1 (Discovery) — COMPLETE
 - Phase 2 (Branding) — COMPLETE (name cleared)
-- Phase 3 (Architecture) — COMPLETE (monorepo layout decided)
-- Phase 4 (Repository initialization) — COMPLETE (pnpm + turbo workspace, git init)
-- Phase 5 (Design system & brand identity) — MOSTLY COMPLETE (tokens, logo, logger, errors in `@veya/shared`; icon PNG rendering pending)
-- Phase 6 (Career profile engine) — COMPLETE (schema, storage, repository, memory, deterministic field resolution, 8 unit tests passing)
-- Phase 7 (Browser extension foundation) — PENDING
-- Phase 8 (Form intelligence) — PENDING
-- Phase 9 (AI provider architecture) — PENDING
-- Phase 10 (Prompt system & context engine) — PENDING
+- Phase 3 (Architecture) — COMPLETE
+- Phase 4 (Repository initialization) — COMPLETE
+- Phase 5 (Design system & brand identity) — MOSTLY COMPLETE (tokens/logo/logger in @veya/shared)
+- Phase 6 (Career profile engine) — COMPLETE (8 tests)
+- Phase 7 (Browser extension foundation) — IN PROGRESS
+- Phase 8 (Form intelligence) — COMPLETE (16 tests, realm-agnostic DOM)
+- Phase 9 (AI provider architecture) — COMPLETE (Ollama live-tested)
+- Phase 10 (Prompt system & context engine) — COMPLETE (5+9+11 tests)
 - Phase 11 (Application intelligence) — PENDING
 - Phase 12 (Document engine) — PENDING
 - Phase 13 (Landing page) — PENDING
@@ -33,14 +33,19 @@ Phase 6 — Career profile engine COMPLETE. Next: Phase 7 (browser extension fou
 - Brand name check: GitHub `veya` free; npm `veya` free (registry 404). No obvious conflict. Keep `VEYA`.
 - Skills audited. Relevant: frontend-design, impeccable, ui-ux-pro-max, webapp-testing, browser-use, demo-video, remotion-best-practices.
 - Package stack verified against registry: typescript@7.0.2, vite@8.2.1, react@19.2.8, react-dom@19.2.8, vitest@4.1.10, zod@4.4.3, turbo@2.10.9, @vitejs/plugin-react@6.0.5, @playwright/test@1.62.1, commander@15.0.0, pdf-parse@2.4.5.
-- Repo initialized at `~/veya`. pnpm workspace + turbo configured. `@veya/shared`, `@veya/core`, `@veya/profile` built & typechecking.
+- Repo initialized at `~/veya`. pnpm workspace + turbo configured. All packages typecheck + build.
 - Design system: graphite+lime tokens (`@veya/shared`), Instrument Sans + Geist Mono, convergence logo mark (SVG + React), privacy-aware logger, typed VeyaError. `prefers-color-scheme` light/dark.
-- Career profile engine: Zod schema (identity, contact, experience, education, skills, projects, certifications, preferences, saved answers, writing style, documents), KVStorage abstraction (Memory/File adapters), ProfileRepository (CRUD, export/import, deleteAll), controlled memory (VERIFIED_FACT/PREFERENCE/SAVED_ANSWER/USER_CORRECTION/GENERATED_CONTEXT with confirmation+promotion), deterministic field resolution engine (sensitive fields never inferred). 8 unit tests passing.
-- Resolution engine guards: work authorization, sponsorship, salary, relocation, demographic never auto-inferred without explicit preference.
+- Career profile engine: Zod schema, KVStorage (Memory/File), ProfileRepository (CRUD, export/import, deleteAll), controlled memory, deterministic field resolution. 8 tests.
+- @veya/security: prompt-injection detection (17 patterns), untrusted-content sanitizers, context boundary assembly, sensitive-value classification (email/phone/apiKey). 9 tests.
+- @veya/prompts: CORE_SYSTEM_INSTRUCTIONS (no-fabrication rule), 6 template instructions, verified-profile serialization, application serialization, 5 prompt builders with hard context boundaries. 5 tests.
+- @veya/providers: shared HTTP client with typed errors + retry classification, OllamaProvider (LIVE-TESTED against 0.32.5: health, model list, generation all pass), OpenAICompatibleProvider (OpenAI/OpenRouter/Groq/LM Studio), AnthropicProvider + GeminiProvider (implemented, NOT live-tested — no keys), provider registry/buildProvider.
+- @veya/ai: context selector (category → minimal verified subset; demographic/legal get zero profile data), DecisionEngine (fill/preference/saved-answer/derive/generate/ask with saved-answer token matching), AnswerGenerator (provider+prompt orchestration, injection gate), JSON block extractor. 11 tests.
+- @veya/form-engine: keyword normalization (longest-match scoring, camelCase/underscore handling), realm-agnostic DOM scanning (labels/aria/legend/heading/select options/radio groups), React-compatible value setting via native prototype setters + bubbled events. 16 tests.
 
 ## In Progress
 
-- Phase 7: Chrome MV3 extension foundation (manifest, popup, sidepanel, options, content script, service worker, build pipeline).
+- Phase 7: Chrome MV3 extension (manifest, popup, sidepanel, options, content script, service worker, build pipeline).
+- Then: application session bridge (content script ↔ service worker ↔ UI).
 
 ## Blocked
 

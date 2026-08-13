@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "../../",
+    "paths": {
+      "@veya/core": ["../core/src/index.ts"],
+      "@veya/profile": ["../profile/src/index.ts"],
+      "@veya/prompts": ["../prompts/src/index.ts"],
+      "@veya/security": ["../security/src/index.ts"],
+      "@veya/shared": ["../shared/src/index.ts"]
+    }
+  },
+  "include": ["src", "test"]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "@veya/ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.typecheck.json",
+    "test:unit": "vitest run"
+  },
+  "dependencies": {
+    "@veya/core": "workspace:*",
+    "@veya/profile": "workspace:*",
+    "@veya/prompts": "workspace:*",
+    "@veya/security": "workspace:*",
+    "@veya/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
+}
