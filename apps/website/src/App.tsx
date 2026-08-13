@@ -1,9 +1,21 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { LogoMark, Wordmark } from "@veya/shared";
 
-/* ------------------------------------------------------------------ */
-/* Scroll-reveal                                                       */
-/* ------------------------------------------------------------------ */
+/* =====================================================================
+   Veya landing page — "The Career Timetable"
+   THESIS: the job application is a scheduled journey; this page is the
+   departure board. One profile, every application, on time.
+   OWN-WORLD: warm paper + ink monochrome; hairline rules; tabular mono
+   data; one grotesque voice with a serif-italic counterpoint; a single
+   authored moment — the board ticking.
+   STORY: visitor reads "local service, nothing leaves this machine",
+   watches fields depart the board as verified/filled/drafted, and installs.
+   FIRST VIEWPORT: slim station ticker, masthead, then a two-column spread
+   — headline left, live departure board right (board leads on mobile).
+   FORM: Swiss timetable (candidate 6); seed key 2bad5a15.
+   FINISH: unreviewed and undocumented is unfinished; this build ends with
+   the finish review, the verdict, and DESIGN.md.
+   ===================================================================== */
 
 function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,7 +39,116 @@ function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; 
 }
 
 /* ------------------------------------------------------------------ */
-/* Scan panel — the hero visual: a Veya side panel filling a form      */
+/* Drawn icon system — one stroke, one weight                         */
+/* ------------------------------------------------------------------ */
+
+const S = { fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M4 12.5 L9.5 18 L20 6" {...S} />
+    </svg>
+  );
+}
+
+function DraftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <rect x="5" y="5" width="14" height="14" rx="1.5" {...S} />
+      <path d="M9 12 h6" {...S} />
+    </svg>
+  );
+}
+
+function ScanIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <rect x="4" y="4" width="16" height="16" rx="1.5" {...S} />
+      <path d="M6 12 H18" {...S} />
+      <path d="M6 8 H12" {...S} strokeWidth="1.2" opacity="0.5" />
+    </svg>
+  );
+}
+
+function NodesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M12 4 V20" {...S} strokeWidth="1.2" opacity="0.5" />
+      <rect x="7.5" y="7.5" width="9" height="9" rx="1.5" {...S} />
+      <path d="M12 12 H20 M12 12 H4" {...S} strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function DocIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M6 3 H15 L19 7 V21 H6 Z" {...S} />
+      <path d="M15 3 V7 H19" {...S} />
+      <path d="M9 12 H15 M9 16 H13" {...S} strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function ReviewIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M3 12 C6 6.5 9 4 12 4 C15 4 18 6.5 21 12 C18 17.5 15 20 12 20 C9 20 6 17.5 3 12 Z" {...S} />
+      <circle cx="12" cy="12" r="3" {...S} />
+    </svg>
+  );
+}
+
+function TransferIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M4 8 H16 M13 4 L17 8 L13 12" {...S} />
+      <path d="M20 16 H8 M11 12 L7 16 L11 20" {...S} />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <rect x="5" y="10.5" width="14" height="10" rx="1.5" {...S} />
+      <path d="M8 10.5 V7.5 A4 4 0 0 1 16 7.5 V10.5" {...S} />
+      <path d="M12 14.5 V16.5" {...S} strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function RouteMarker({ filled = false }: { filled?: boolean }) {
+  return filled ? (
+    <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+      <rect x="1" y="1" width="10" height="10" fill="currentColor" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+      <rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+function DownIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M12 4 V20 M6 14 L12 20 L18 14" {...S} />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M4 12 H20 M14 6 L20 12 L14 18" {...S} />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* The departure board — the hero thesis                              */
 /* ------------------------------------------------------------------ */
 
 const FIELD_ROWS = [
@@ -38,55 +159,102 @@ const FIELD_ROWS = [
   { label: "Why this role?", value: "AI draft · review before submit", kind: "draft" },
 ] as const;
 
-function ScanPanel() {
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function useClock(stepSeconds = 6) {
+  const [minute, setMinute] = useState(4);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setMinute((v) => (v + 1) % 60), stepSeconds * 1000);
+    return () => window.clearInterval(id);
+  }, [stepSeconds]);
+  return minute;
+}
+
+function DepartureBoard() {
+  const now = useClock();
   return (
-    <div className="panel">
-      <div className="panel__bar">
-        <div className="panel__tabs">
-          <span className="panel__tab">
-            <span className="panel__url" />
-            careers.acme.io/jobs/42
-          </span>
-          <span className="panel__tab panel__tab--active">
-            <LogoMark size={13} />
-            veya
-          </span>
+    <div className="board">
+      <div className="board__top">
+        <div className="board__station">
+          <LogoMark size={15} />
+          <span>VEYA</span>
+          <span className="board__meta">CAREER SERVICE</span>
         </div>
+        <span className="board__live">
+          <span className="board__pulse" />
+          LIVE
+        </span>
       </div>
 
-      <div className="panel__body">
-        <div className="panel__meta">
-          <span className="chip chip--accent">● LIVE</span>
-          <span className="panel__metaText">8 fields detected · 5 verified · 1 drafted</span>
-        </div>
+      <div className="board__head" role="row">
+        <span className="board__col board__col--time">DEP</span>
+        <span className="board__col board__col--svc">FIELD</span>
+        <span className="board__col board__col--dest">VERIFIED VALUE</span>
+        <span className="board__col board__col--st">ST</span>
+      </div>
 
-        <div className="scan">
-          <div className="scan__beam" />
-          {FIELD_ROWS.map((row, i) => (
-            <div className={`row row--${row.kind}`} key={row.label} style={{ ["--i" as string]: i }}>
-              <span className="row__label">{row.label}</span>
-              <span className="row__slot">{row.value}</span>
-              <span className="row__status">
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                  <path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+      <div className="board__rows">
+        <div className="board__scan" aria-hidden="true" />
+        {FIELD_ROWS.map((row, i) => {
+          const dep = (now - (FIELD_ROWS.length - 1 - i) + 60) % 60;
+          return (
+            <div className={`board__row board__row--${row.kind}`} key={row.label} style={{ ["--i" as string]: i }}>
+              <span className="board__col board__col--time mono">{`12:${pad(dep)}`}</span>
+              <span className="board__col board__col--svc">
+                <span className="board__svc">{row.label}</span>
+              </span>
+              <span className="board__col board__col--dest">
+                <span className="board__dest mono">{row.value}</span>
+              </span>
+              <span className="board__col board__col--st">
+                <span className={`board__st board__st--${row.kind}`}>
+                  {row.kind === "fill" ? <CheckIcon /> : <DraftIcon />}
+                </span>
               </span>
             </div>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
-        <div className="panel__footer">
-          <span className="panel__footKey">local-first</span>
-          <span className="panel__footValue">nothing leaves this machine</span>
-        </div>
+      <div className="board__foot">
+        <span className="board__footKey">LOCAL SERVICE</span>
+        <span className="board__footMeta">8 fields detected · 5 verified · 1 drafted</span>
+        <span className="board__footValue">nothing leaves this machine</span>
       </div>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
+/* Line label — the kicker reborn as a timetable line                 */
+/* ------------------------------------------------------------------ */
+
+function Line({ children, center = false }: { children: ReactNode; center?: boolean }) {
+  return (
+    <p className={`line ${center ? "line--center" : ""}`}>
+      <RouteMarker />
+      <span>{children}</span>
+    </p>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Sections                                                            */
 /* ------------------------------------------------------------------ */
+
+function Ticker() {
+  return (
+    <div className="ticker">
+      <span className="ticker__item">VEYA · CAREER SERVICES</span>
+      <span className="ticker__item ticker__item--dim">LOCAL-ONLY</span>
+      <span className="ticker__item ticker__item--dim">NO ACCOUNT</span>
+      <span className="ticker__item ticker__item--dim">BRING YOUR OWN MODEL</span>
+    </div>
+  );
+}
 
 function Nav() {
   return (
@@ -109,14 +277,10 @@ function Nav() {
 function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero__grid" />
       <div className="hero__inner">
         <div className="hero__copy">
           <Reveal>
-            <p className="kicker">
-              <span className="kicker__dot" />
-              VAY-uh · a privacy-first career assistant
-            </p>
+            <Line>VAY-uh · a privacy-first career assistant</Line>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="hero__title">
@@ -137,19 +301,17 @@ function Hero() {
                 Install the extension
               </a>
               <a className="btn btn--ghost btn--lg" href="#how">
-                See how it works <span aria-hidden="true">↓</span>
+                See how it works <DownIcon />
               </a>
             </div>
           </Reveal>
           <Reveal delay={320}>
-            <p className="hero__note mono">
-              no account · no cloud · bring your own model
-            </p>
+            <p className="hero__note mono">no account · no cloud · bring your own model</p>
           </Reveal>
         </div>
 
         <Reveal delay={200} className="hero__visual">
-          <ScanPanel />
+          <DepartureBoard />
         </Reveal>
       </div>
     </section>
@@ -163,7 +325,10 @@ function Trust() {
       <div className="trust__inner">
         {items.map((item) => (
           <div className="trust__item mono" key={item}>
-            <span className="trust__tick">✓</span> {item}
+            <span className="trust__tick">
+              <CheckIcon />
+            </span>
+            {item}
           </div>
         ))}
       </div>
@@ -195,17 +360,22 @@ function HowItWorks() {
   return (
     <section className="section" id="how">
       <Reveal>
-        <p className="section__kicker mono">HOW IT WORKS</p>
-        <h2 className="section__title">Three movements.<br />Zero rewrites.</h2>
+        <Line>HOW IT WORKS</Line>
+        <h2 className="section__title">
+          Three movements.<br />Zero rewrites.
+        </h2>
       </Reveal>
-      <div className="steps">
+      <div className="route">
         {steps.map((s, i) => (
-          <Reveal key={s.n} delay={i * 90}>
-            <article className="step">
-              <span className="step__n mono">{s.n}</span>
-              <span className="step__tag mono">{s.tag}</span>
-              <h3 className="step__title">{s.title}</h3>
-              <p className="step__body">{s.body}</p>
+          <Reveal key={s.n} delay={i * 90} className="route__cell">
+            <article className="stop">
+              <div className="stop__top">
+                <RouteMarker filled />
+                <span className="stop__n mono">STOP {s.n}</span>
+                <span className="stop__tag mono">{s.tag}</span>
+              </div>
+              <h3 className="stop__title">{s.title}</h3>
+              <p className="stop__body">{s.body}</p>
             </article>
           </Reveal>
         ))}
@@ -216,28 +386,30 @@ function HowItWorks() {
 
 function Features() {
   const features = [
-    { icon: "⌕", name: "Form intelligence", body: "A deterministic engine classifies fields — name, work authorization, LinkedIn, availability — from messy, framework-built DOM." },
-    { icon: "◆", name: "Model-agnostic AI", body: "Ollama on your machine, or your own key for OpenAI, Anthropic, Gemini, Groq, OpenRouter. Nothing routed through Veya." },
-    { icon: "▤", name: "Document engine", body: "Parse a résumé PDF to seed your profile. Generate a tailored cover letter and export it as a clean PDF." },
-    { icon: "✓", name: "Review-first by design", body: "Every answer is sourced — verified, preference, saved answer, or draft. You approve before anything is submitted." },
-    { icon: "⇄", name: "Import & export", body: "Your profile is a plain file. Take it with you, version it, restore it. Portable by construction." },
-    { icon: "◎", name: "Sensitive by default", body: "Demographics, sponsorship, salary, legal — Veya never auto-infers these. Only explicit choices fill them." },
+    { icon: <ScanIcon />, name: "Form intelligence", body: "A deterministic engine classifies fields — name, work authorization, LinkedIn, availability — from messy, framework-built DOM." },
+    { icon: <NodesIcon />, name: "Model-agnostic AI", body: "Ollama on your machine, or your own key for OpenAI, Anthropic, Gemini, Groq, OpenRouter. Nothing routed through Veya." },
+    { icon: <DocIcon />, name: "Document engine", body: "Parse a résumé PDF to seed your profile. Generate a tailored cover letter and export it as a clean PDF." },
+    { icon: <ReviewIcon />, name: "Review-first by design", body: "Every answer is sourced — verified, preference, saved answer, or draft. You approve before anything is submitted." },
+    { icon: <TransferIcon />, name: "Import & export", body: "Your profile is a plain file. Take it with you, version it, restore it. Portable by construction." },
+    { icon: <LockIcon />, name: "Sensitive by default", body: "Demographics, sponsorship, salary, legal — Veya never auto-infers these. Only explicit choices fill them." },
   ];
   return (
     <section className="section section--features" id="features">
       <Reveal>
-        <p className="section__kicker mono">THE ENGINE</p>
+        <Line>THE ENGINE</Line>
         <h2 className="section__title">Small, sharp, on your side.</h2>
       </Reveal>
-      <div className="features">
+      <div className="ledger">
         {features.map((f, i) => (
-          <Reveal key={f.name} delay={(i % 3) * 80} className="features__cell">
+          <Reveal key={f.name} delay={(i % 3) * 60} className="ledger__cell">
             <article className="feature">
               <span className="feature__icon" aria-hidden="true">
                 {f.icon}
               </span>
-              <h3 className="feature__name">{f.name}</h3>
-              <p className="feature__body">{f.body}</p>
+              <div className="feature__text">
+                <h3 className="feature__name">{f.name}</h3>
+                <p className="feature__body">{f.body}</p>
+              </div>
             </article>
           </Reveal>
         ))}
@@ -252,8 +424,8 @@ function Privacy() {
       <Reveal>
         <div className="privacy__panel">
           <div className="privacy__head">
-            <p className="section__kicker mono">PRIVACY, FIRST</p>
-            <LogoMark size={40} />
+            <Line>PRIVACY, FIRST</Line>
+            <LogoMark size={34} />
           </div>
           <h2 className="privacy__title">Your data never leaves your machine.</h2>
           <p className="privacy__body">
@@ -262,10 +434,22 @@ function Privacy() {
             There is no Veya server, no analytics ping, no invisible third party.
           </p>
           <ul className="privacy__list">
-            <li className="mono"><span>/no-backend</span> no Veya servers, ever</li>
-            <li className="mono"><span>/no-training</span> your profile is never a dataset</li>
-            <li className="mono"><span>/no-guessing</span> sensitive answers stay yours</li>
-            <li className="mono"><span>/byok</span> bring your own model & key</li>
+            <li className="mono">
+              <RouteMarker filled />
+              <span>/no-backend</span> no Veya servers, ever
+            </li>
+            <li className="mono">
+              <RouteMarker filled />
+              <span>/no-training</span> your profile is never a dataset
+            </li>
+            <li className="mono">
+              <RouteMarker filled />
+              <span>/no-guessing</span> sensitive answers stay yours
+            </li>
+            <li className="mono">
+              <RouteMarker filled />
+              <span>/byok</span> bring your own model &amp; key
+            </li>
           </ul>
         </div>
       </Reveal>
@@ -277,7 +461,7 @@ function OpenSource() {
   return (
     <section className="section section--oss" id="open-source">
       <Reveal>
-        <p className="section__kicker mono">OPEN SOURCE</p>
+        <Line>OPEN SOURCE</Line>
         <h2 className="section__title">Read every line.</h2>
         <p className="section__lead">
           Trust is earned in the source. Veya is a single repo — the form engine, the security layer, the
@@ -285,7 +469,7 @@ function OpenSource() {
         </p>
         <div className="oss__cta">
           <a className="btn btn--ghost mono" href="https://github.com/Jasowills/veya" rel="noreferrer">
-            github.com/Jasowills/veya →
+            github.com/Jasowills/veya <ArrowIcon />
           </a>
         </div>
       </Reveal>
@@ -298,10 +482,7 @@ function Install() {
     <section className="install" id="install">
       <div className="install__inner">
         <Reveal>
-          <p className="kicker kicker--center">
-            <span className="kicker__dot" />
-            GET STARTED
-          </p>
+          <Line center>GET STARTED</Line>
           <h2 className="install__title">
             One profile.
             <br />
@@ -339,6 +520,7 @@ function Footer() {
 export function App() {
   return (
     <>
+      <Ticker />
       <Nav />
       <main>
         <Hero />

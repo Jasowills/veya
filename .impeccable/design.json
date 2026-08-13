@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-13T00:00:00Z",
+  "title": "Design System: Veya — The Career Timetable",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#f1eee6", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
+      "paper-raised": { "role": "neutral", "displayName": "Raised Paper", "canonical": "#e9e5d8", "tonalRamp": ["#575146", "#6e6858", "#8a8371", "#a39c89", "#b9b29e", "#cbc5b3", "#d9d4c5", "#e9e5d8"] },
+      "paper-deep": { "role": "neutral", "displayName": "Deep Paper", "canonical": "#ded9c7", "tonalRamp": ["#4c473d", "#635e50", "#7d7766", "#948d7a", "#a9a28e", "#bdb6a2", "#cdc8b5", "#ded9c7"] },
+      "ink": { "role": "neutral", "displayName": "Warm Ink", "canonical": "#17140e", "tonalRamp": ["#17140e", "#2a261c", "#3b372b", "#4c473d", "#635e50", "#7d7766", "#a39c89", "#e9e5d8"] },
+      "ink-secondary": { "role": "neutral", "displayName": "Secondary Ink", "canonical": "#575146", "tonalRamp": ["#575146", "#6e6858", "#8a8371", "#a39c89", "#b9b29e", "#cbc5b3", "#d9d4c5", "#e9e5d8"] },
+      "ink-tertiary": { "role": "neutral", "displayName": "Tertiary Ink", "canonical": "#6e6858", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
+      "on-ink": { "role": "neutral", "displayName": "Paper on Ink", "canonical": "#f1eee6", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
+      "on-ink-muted": { "role": "neutral", "displayName": "Muted On-Ink", "canonical": "rgba(241, 238, 230, 0.72)", "tonalRamp": [] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero statement only, Archivo 800." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles, Archivo 760." },
+      "label": { "displayName": "Label", "purpose": "Line designations, board headers, times; IBM Plex Mono uppercase." },
+      "accent-italic": { "displayName": "Serif Accent", "purpose": "The emotive phrase inside a display heading; Instrument Serif italic only." }
+    },
+    "shadows": [
+      { "name": "board-ambient", "value": "0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35)", "purpose": "The single shadow in the system, under the hero departure board." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.22, 0.8, 0.2, 1)", "purpose": "Default easing for transitions and reveals." },
+      { "name": "board-clock", "value": "one minute every 6s", "purpose": "The station clock; freezes under prefers-reduced-motion." },
+      { "name": "board-scan", "value": "1px ink line sweeping the board once (2.4s, 0.4s delay)", "purpose": "The authored moment; hidden under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "board-mobile", "value": "640px" },
+      { "name": "hero-stack", "value": "900px" },
+      { "name": "route-stack", "value": "860px" },
+      { "name": "trust-2col", "value": "800px" },
+      { "name": "ledger-1col", "value": "760px" },
+      { "name": "nav-links-hide", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one solid action on the page (Install the extension / Get Veya).",
+      "html": "<a class=\"ds-btn-primary\">Install the extension</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 9px; background: #17140e; color: #f1eee6; padding: 14px 28px; border-radius: 3px; font-family: 'Archivo', sans-serif; font-weight: 650; font-size: 15px; letter-spacing: 0.01em; transition: background 0.2s cubic-bezier(0.22,0.8,0.2,1); cursor: pointer; } .ds-btn-primary:hover { background: #2a261c; } .ds-btn-primary:focus-visible { outline: 2px solid #17140e; outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action (See how it works / GitHub link).",
+      "html": "<a class=\"ds-btn-ghost\">See how it works <svg viewBox=\"0 0 24 24\" width=\"17\" height=\"17\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4 V20 M6 14 L12 20 L18 14\"/></svg></a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 9px; border: 1px solid rgba(23,20,14,0.32); color: #17140e; background: transparent; padding: 11px 22px; border-radius: 3px; font-family: 'Archivo', sans-serif; font-weight: 650; font-size: 14px; transition: background 0.2s cubic-bezier(0.22,0.8,0.2,1), color 0.2s cubic-bezier(0.22,0.8,0.2,1); cursor: pointer; } .ds-btn-ghost:hover { background: #17140e; color: #f1eee6; } .ds-btn-ghost:focus-visible { outline: 2px solid #17140e; outline-offset: 3px; }"
+    },
+    {
+      "name": "Departure Board Row",
+      "kind": "card",
+      "refersTo": "board",
+      "description": "A form field as a train departure: time, field name, verified value, status box.",
+      "html": "<div class=\"ds-board\"><div class=\"ds-board-row\"><span class=\"ds-time\">12:04</span><span class=\"ds-svc\">Email</span><span class=\"ds-dest\">ada@example.com</span><span class=\"ds-st\"><svg viewBox=\"0 0 24 24\" width=\"13\" height=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12.5 L9.5 18 L20 6\"/></svg></span></div></div>",
+      "css": ".ds-board { border: 1px solid rgba(23,20,14,0.32); background: #e9e5d8; font-family: 'Archivo', sans-serif; } .ds-board-row { display: grid; grid-template-columns: 60px 1fr 1.3fr 42px; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid rgba(23,20,14,0.14); } .ds-time { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-variant-numeric: tabular-nums; color: #17140e; } .ds-svc { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-dest { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #575146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-st { display: inline-flex; align-items: center; justify-content: center; width: 21px; height: 21px; border: 1px solid rgba(23,20,14,0.32); border-radius: 3px; color: #17140e; } @media (max-width: 640px) { .ds-board-row { grid-template-columns: 40px 1fr 30px; grid-template-areas: \"time svc st\" \"time dest st\"; row-gap: 2px; } }"
+    },
+    {
+      "name": "Line Label",
+      "kind": "chip",
+      "refersTo": "button-ghost",
+      "description": "Section designation as timetable furniture: route marker + uppercase mono.",
+      "html": "<p class=\"ds-line\"><svg viewBox=\"0 0 12 12\" width=\"10\" height=\"10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"><rect x=\"1.5\" y=\"1.5\" width=\"9\" height=\"9\"/></svg><span>HOW IT WORKS</span></p>",
+      "css": ".ds-line { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #575146; } .ds-line svg { color: #17140e; }"
+    },
+    {
+      "name": "Navigation Masthead",
+      "kind": "nav",
+      "refersTo": "button-ghost",
+      "description": "Sticky paper masthead with mono uppercase links and a scaling ink underline.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-nav-link\">how it works</span><span class=\"ds-nav-link\">privacy</span></nav>",
+      "css": ".ds-nav { display: flex; gap: 30px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #575146; } .ds-nav-link { position: relative; cursor: pointer; transition: color 0.18s cubic-bezier(0.22,0.8,0.2,1); } .ds-nav-link::after { content: \"\"; position: absolute; left: 0; bottom: -5px; width: 100%; height: 1px; background: #17140e; transform: scaleX(0); transform-origin: left; transition: transform 0.25s cubic-bezier(0.22,0.8,0.2,1); } .ds-nav-link:hover { color: #17140e; } .ds-nav-link:hover::after { transform: scaleX(1); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Career Timetable",
+    "overview": "Veya presents the job application as a scheduled journey — a warm-paper Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome: warm paper and warm ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine. Density is calm and editorial: large grotesque display with a serif-italic counterpoint, tabular mono data set in ruled grids, and generous paper. Depth comes from tonal layering and a single soft shadow under the hero board, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.",
+    "keyCharacteristics": [
+      "Warm monochrome only — paper and ink ramps, never gray, never hue.",
+      "Hairline rules (1px) define structure; borders are lines, not boxes.",
+      "One display voice (Archivo) with an Instrument Serif italic counterpoint for the emotive phrase.",
+      "Tabular IBM Plex Mono reserved for data, times, labels, and line designations.",
+      "Sharp corners (2–3px); no pill shapes, no soft rounded rectangles.",
+      "One authored motion moment: the live departure board."
+    ],
+    "rules": [
+      { "name": "The Monochrome Rule", "body": "Warm paper and ink only. Any departure from the ramp (a hue, a glow, a pure gray) is a defect, not an accent. Status is communicated by fill vs. outline (solid = verified, dashed = draft), never by color.", "section": "colors" },
+      { "name": "The Inverted Moment Rule", "body": "The ink panel is used exactly once, for privacy — the page's single moment of gravity. Everything else lives on paper.", "section": "colors" },
+      { "name": "The One Voice Rule", "body": "Archivo carries every word of information; the serif italic appears only in the emotive phrase of a display heading. A second information voice is not available.", "section": "typography" },
+      { "name": "The Data Voice Rule", "body": "Times, values, statuses, and labels are set in IBM Plex Mono with tabular numerals. Mono never types a headline and a headline is never set in mono.", "section": "typography" },
+      { "name": "The Single Shadow Rule", "body": "The board is the only object that casts a shadow. Depth everywhere else is tonal.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do stay within the warm paper/ink ramp; tint secondary text from ink, never gray.",
+      "Do set times, values, and labels in IBM Plex Mono with tabular numerals.",
+      "Do use drawn SVG glyphs (one stroke weight) for every icon and status mark.",
+      "Do keep the board the only shadowed object and the ink panel the only inversion.",
+      "Do hide the board's live behavior under prefers-reduced-motion."
+    ],
+    "donts": [
+      "Don't introduce an accent color, gradient text, glow, or glass. The monochrome is the brand.",
+      "Don't use unicode glyphs or emoji as icons.",
+      "Don't use mono as a headline voice, or a serif for information.",
+      "Don't render small tertiary text on raised or deep paper (fails contrast); keep it on paper or step it up to secondary ink.",
+      "Don't add cards, rounded rectangles, or pill shapes — structure is ruled lines and near-square corners."
+    ]
+  }
+}
