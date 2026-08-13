@@ -14,7 +14,14 @@ const mark = readFileSync(resolve(root, "../../packages/shared/src/logo.svg"), "
 
 const SIZES = [16, 32, 48, 128];
 
-const browser = await chromium.launch();
+// Icons are committed to the repo, so CI builds don't need a browser.
+let browser;
+try {
+  browser = await chromium.launch();
+} catch {
+  console.log("chromium not available — icons are committed, skipping generation");
+  process.exit(0);
+}
 const page = await browser.newPage();
 
 for (const size of SIZES) {
