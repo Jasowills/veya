@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phase 12 (document engine) COMPLETE. Phase 13 (landing page) COMPLETE. Phase 14 (CLI) COMPLETE. Next: Phase 15, with Phase 11's panel⇄SW flow needing a real-browser pass.
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phases 12–15 COMPLETE (document engine, landing page, CLI, fixtures/CI/docs/repo). Next: Phase 16, with Phase 11's panel⇄SW flow still needing a real-browser pass.
 
 ## Overall Status
 
@@ -23,7 +23,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 12 (Document engine) — COMPLETE
 - Phase 13 (Landing page) — COMPLETE
 - Phase 14 (CLI & local companion) — COMPLETE (`apps/cli`, `veya doctor/profile/resume/cover-letter`, 14 tests; verified live: resume PDF → profile seed → import → cover letter → PDF via Ollama)
-- Phase 15 (Testing, security, docs, CI) — PENDING
+- Phase 15 (Testing, security, docs, CI) — COMPLETE (job-site fixtures + form-engine fixture tests, GitHub Actions CI green, README, repo pushed to github.com/Jasowills/veya)
 - Phase 16 (Packaging & final audit) — PENDING
 
 ## Completed
@@ -50,7 +50,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 
 ## In Progress
 
-- Phase 15: fixtures done (`tests/fixtures/job-sites/{workable,greenhouse}.html`, consumed by extension e2e + form-engine jsdom tests). CI workflow added (`.github/workflows/ci.yml`). README added. Remaining: GitHub repo push, then verify CI runs green on the remote.
+- Phase 16: packaging & final audit (extension zip, CLI distribution, docs pass, final review).
 
 ## Blocked
 
