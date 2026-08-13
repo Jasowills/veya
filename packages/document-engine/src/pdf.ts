@@ -4,7 +4,7 @@
  * Uses pdf-lib (pure JS, no native deps). Text is greedy-wrapped and paginated.
  */
 
-import { PDFDocument, StandardFonts, type PDFFont, type PDFPage } from "pdf-lib";
+import { PDFDocument, StandardFonts, type PDFPage } from "pdf-lib";
 
 export interface PdfComposeOptions {
   /** Bold heading drawn at the top of the first page. */
@@ -32,9 +32,6 @@ export async function composeTextPdf(text: string, opts: PdfComposeOptions = {})
   const pageSize = opts.pageSize ?? US_LETTER;
   const maxWidth = pageSize.width - margins.left - margins.right;
 
-  let page = doc.addPage([pageSize.width, pageSize.height]);
-  let y = pageSize.height - margins.top;
-
   const wrap = (paragraph: string, width: number): string[] => {
     const lines: string[] = [];
     let current = "";
@@ -51,32 +48,53 @@ export async function composeTextPdf(text: string, opts: PdfComposeOptions = {})
     return lines;
   };
 
-  const ensureRoom = (needed: number) => {
-    if (y - needed < margins.bottom) {
-      page = doc.addPage([pageSize.width, pageSize.height]);
-      y = pageSize.height - margins.top;
+  // Logical output lines (blank lines preserved) with hard breaks at single \n.
+  const rendered: string[] = [];
+  for (const rawLine of text.split("\n")) {
+    const trimmed = rawLine.trim();
+    if (!trimmed) {
+      rendered.push("");
+      continue;
     }
-  };
-
-  const drawLine = (content: string, font: PDFFont, size: number, height: number) => {
-    ensureRoom(height);
-    page.drawText(content, { x: margins.left, y, size, font });
-    y -= height;
-  };
-
-  if (opts.heading) {
-    drawLine(opts.heading, bold, headingFontSize, headingFontSize * 1.5);
-    y -= lineHeight * 0.5;
+    for (const line of wrap(trimmed, maxWidth)) rendered.push(line);
   }
 
-  for (const rawParagraph of text.split(/\n{2,}/)) {
-    const paragraph = rawParagraph.trim();
-    if (!paragraph) continue;
-    for (const line of wrap(paragraph, maxWidth)) {
-      drawLine(line, font, fontSize, lineHeight);
+  // Paginate greedily. A blank line costs half a line height.
+  const pageBody = pageSize.height - margins.top - margins.bottom;
+  const headingHeight = opts.heading ? headingFontSize * 1.5 + lineHeight * 0.5 : 0;
+  const pages: string[][] = [];
+  let pageLines: string[] = [];
+  let used = 0;
+  for (const line of rendered) {
+    const cost = line === "" ? lineHeight * 0.5 : lineHeight;
+    const budget = pages.length === 0 ? pageBody - headingHeight : pageBody;
+    if (line !== "" && used + cost > budget) {
+      pages.push(pageLines);
+      pageLines = [];
+      used = 0;
     }
-    y -= lineHeight * 0.5;
+    if (line === "") {
+      if (pageLines.length > 0) pageLines.push("");
+    } else {
+      pageLines.push(line);
+      used += cost;
+    }
   }
+  if (pageLines.length > 0) pages.push(pageLines);
+
+  const drawBody = (page: PDFPage, lines: string[]) => {
+    const y = pageSize.height - margins.top - headingHeight;
+    page.drawText(lines.join("\n"), { x: margins.left, y, size: fontSize, font, lineHeight });
+  };
+
+  if (pages.length === 0) pages.push([]);
+  pages.forEach((lines, i) => {
+    const page = doc.addPage([pageSize.width, pageSize.height]);
+    if (i === 0 && opts.heading) {
+      page.drawText(opts.heading, { x: margins.left, y: pageSize.height - margins.top, size: headingFontSize, font: bold });
+    }
+    drawBody(page, lines);
+  });
 
   return doc.save();
 }

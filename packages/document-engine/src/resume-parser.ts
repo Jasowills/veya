@@ -46,7 +46,8 @@ export interface ParsedResume {
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/;
 const PHONE_RE = /(?:\+?\d[\d\s().-]{7,}\d)/;
 const LINKEDIN_RE = /linkedin\.com\/[\w/\-]+/i;
-const WEBSITE_RE = /(?:https?:\/\/)?(?:www\.)?[\w-]+\.(?:com|io|dev|org|net|me|co|app)(?:\/[^\s]*)?/i;
+const WEBSITE_RE = /(?<![\w@])(?:https?:\/\/)?(?:www\.)?[\w-]+\.(?:com|io|dev|org|net|me|co|app)(?:\/[^\s]*)?/i;
+const PAGE_FOOTER_RE = /^\s*(?:[-–—./]{2,}|\d+\s*(?:of|\/)\s*\d+|page\s+\d+)/i;
 
 const SKILL_HEADINGS: RegExp[] = [/skills?$/i, /technical skills?$/i, /core competencies$/i, /technologies$/i, /tools$/i, /expertise$/i];
 const EXPERIENCE_HEADINGS: RegExp[] = [/experience$/i, /work experience$/i, /professional experience$/i, /employment(?: history)?$/i, /work history$/i];
@@ -153,6 +154,7 @@ export function parseResumeText(text: string): ParsedResume {
 
   for (const line of lines) {
     if (!line) continue;
+    if (PAGE_FOOTER_RE.test(line)) continue;
     const h = headingOf(line);
     if (h) {
       current = { heading: h, lines: [] };

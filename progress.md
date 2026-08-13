@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phase 12 (document engine) COMPLETE. Phase 13 (landing page) COMPLETE. Next: Phase 14 (CLI), with Phase 11's panel⇄SW flow needing a real-browser pass.
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phase 12 (document engine) COMPLETE. Phase 13 (landing page) COMPLETE. Phase 14 (CLI) COMPLETE. Next: Phase 15, with Phase 11's panel⇄SW flow needing a real-browser pass.
 
 ## Overall Status
 
@@ -22,7 +22,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 11 (Application intelligence) — PARTIAL (extension orchestration logic extracted to `src/background/logic.ts`, unit-tested; background handles analyzeJob/generate/profile flows; side panel shows job context + AI draft button. Panel ⇄ SW routing not yet verified in a real browser — headless Playwright cannot deliver page→SW messages)
 - Phase 12 (Document engine) — COMPLETE
 - Phase 13 (Landing page) — COMPLETE
-- Phase 14 (CLI & local companion) — PENDING
+- Phase 14 (CLI & local companion) — COMPLETE (`apps/cli`, `veya doctor/profile/resume/cover-letter`, 14 tests; verified live: resume PDF → profile seed → import → cover letter → PDF via Ollama)
 - Phase 15 (Testing, security, docs, CI) — PENDING
 - Phase 16 (Packaging & final audit) — PENDING
 
@@ -45,11 +45,12 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 11 extension logic: `src/background/logic.ts` holds the pure, chrome-free functions `jobFromHeuristics` (title/URL → company/role, drops job-board subdomains like `careers.`), `buildPlan` (DecisionEngine per field → FieldDecision), and `fillableAnswers` (edited > draft > decision). Background service worker wires them to `analyzeJob` (AI, heuristic fallback), `generateAnswer` (DecisionEngine gate → AnswerGenerator with job context), and profile handlers (get/save/export/import). Side panel renders job context + AI-draft buttons; options page gained a tabbed `ProfileEditor` (basics/experience/skills/preferences) with import/export. 8 unit tests.
 - @veya/document-engine: `parseResumePdf` (text extraction via `pdf-parse@2` — API now VERIFIED via a pdf-lib→pdf-parse roundtrip test) + `parseResumeText` (heuristic section detection: contact/skills/experience/education, experience block grouping, date/bullet recognition), `generateCoverLetter` (profile + application → @veya/prompts cover-letter builder → any AIProvider), `composeTextPdf`/`composeCoverLetterPdf` (greedy-wrapped, paginated PDF via `pdf-lib`, US Letter default, custom margins/fonts). 10 unit tests + 1 live Ollama test (llama3.2:1b → cover letter → valid PDF).
 - @veya/website (`apps/website`): React 19 + Vite landing page in the "technical instrument" aesthetic — graphite + lime tokens from @veya/shared, Instrument Sans + Geist Mono, blueprint-grid hero, and an animated hero visual: a mock Veya side panel that sweeps a scan beam over a job form and fills each field (staggered CSS animations). Sections: hero, trust strip, how-it-works (3 steps), feature grid, privacy panel (/no-backend · /no-training · /no-guessing · /byok), open source, install CTA, footer. Responsive (2-col → 1-col), `prefers-color-scheme` light/dark, reduced-motion aware. Verified headless: no console errors, no horizontal overflow at 390/1440px, fonts loaded, animations run. Screenshots: `apps/website/scripts/screenshot.mjs`.
+- @veya/cli (`apps/cli`, bin `veya`): commander-based local companion. `veya doctor` (node/profile-dir/extension-build/ollama health checks, critical-failure exit code), `veya profile init|show|export|import` (import accepts bare seeds or full export envelopes; store at `~/.veya/profile.json` via FileStorage + a small Node `FileSystemLike` adapter in `src/fs.ts`), `veya resume parse <file.pdf>` (document-engine → profile seed, mapped in `src/resume-mapper.ts`), `veya cover-letter` (profile + job context → Ollama → text or PDF). 14 unit tests. Live-verified end-to-end: generated resume PDF → `resume parse` → `profile import` → `cover-letter` (llama3.2:1b) → valid PDF.
+- Assumption verified: `composeTextPdf` now preserves single-newline structure (draws each page as one multi-line `drawText`) so pdf-parse reads real line breaks back; parser also ignores pdf-parse footer artifacts (`-- 1 of 1 --`, `Page N of N`) and no longer treats an email domain as a website.
 
 ## In Progress
 
-- Phase 14: CLI + local companion (`apps/cli`, commander, `veya doctor`).
-- Phase 13 review: landing page built + programmatically verified; visual QA by eye is still pending (screenshots at /tmp/veya-site-*.png, preview served on :4175).
+- Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo push.
 
 ## Blocked
 

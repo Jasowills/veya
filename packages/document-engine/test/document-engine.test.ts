@@ -60,6 +60,13 @@ describe("parseResumeText", () => {
     const r = parseResumeText(SAMPLE_RESUME);
     expect(r.sections.map((s) => s.heading)).toEqual(["preamble", "SUMMARY", "TECHNICAL SKILLS", "EXPERIENCE", "EDUCATION"]);
   });
+
+  it("ignores pdf-parse footer artifacts and email domains as websites", () => {
+    const r = parseResumeText(`${SAMPLE_RESUME}\n-- 1 of 1 --`);
+    expect(r.education.join(" ")).not.toContain("1 of 1");
+    expect(r.education.join(" ")).not.toContain("--");
+    expect(r.contact.website).toBeUndefined();
+  });
 });
 
 async function buildSamplePdfBytes(): Promise<Uint8Array> {
