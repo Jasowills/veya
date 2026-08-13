@@ -16,7 +16,11 @@
     "test:unit": "turbo run test:unit",
     "test:ext": "pnpm --filter @veya/extension test",
     "test:web": "pnpm --filter @veya/website test",
+    "package": "node scripts/package.mjs",
     "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "bin": {
+    "veya": "apps/cli/dist/index.js"
   },
   "devDependencies": {
     "turbo": "^2.10.9",

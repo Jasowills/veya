@@ -34,3 +34,6 @@ pnpm-debug.log*
 *.crx
 apps/extension/.e2e-dist/
 apps/extension/.e2e.log
+
+# Packaging output
+release/

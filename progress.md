@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phases 12–15 COMPLETE (document engine, landing page, CLI, fixtures/CI/docs/repo). Next: Phase 16, with Phase 11's panel⇄SW flow still needing a real-browser pass.
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phases 12–16 COMPLETE (document engine, landing page, CLI, fixtures/CI/docs/repo, packaging). Only remaining item: Phase 11's panel⇄SW flow needs a real-browser pass.
 
 ## Overall Status
 
@@ -24,7 +24,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 13 (Landing page) — COMPLETE
 - Phase 14 (CLI & local companion) — COMPLETE (`apps/cli`, `veya doctor/profile/resume/cover-letter`, 14 tests; verified live: resume PDF → profile seed → import → cover letter → PDF via Ollama)
 - Phase 15 (Testing, security, docs, CI) — COMPLETE (job-site fixtures + form-engine fixture tests, GitHub Actions CI green, README, repo pushed to github.com/Jasowills/veya)
-- Phase 16 (Packaging & final audit) — PENDING
+- Phase 16 (Packaging & final audit) — COMPLETE (extension zip + CLI global install via `pnpm add --global .`, `veya doctor` verified on the installed bin, README packaging section, stale progress.md sections refreshed, full repo checks green)
 
 ## Completed
 
@@ -50,7 +50,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 
 ## In Progress
 
-- Phase 16: packaging & final audit (extension zip, CLI distribution, docs pass, final review).
+- Nothing blocked the build pipeline; the only open item is the real-browser verification of the side-panel flow (see Blocked).
 
 ## Blocked
 
@@ -101,21 +101,21 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 
 - `ollama list` + `GET /api/tags` against localhost:11434 → OK, returns models.
 - gh auth → OK (HTTPS, keyring).
-- `pnpm install` → OK. All 9 packages: typecheck + build → OK.
-- Unit tests: profile 8/8, security 9/9, prompts 5/5, providers live 3/3 (VEYA_OLLAMA_TEST=1), ai 11/11, form-engine 16/16 → OK.
-- Extension smoke (`scripts/smoke.mjs`): extension loads in headless Chromium, service worker starts, side panel renders → OK.
-- Extension e2e (`scripts/e2e.mjs`, test manifest): 9-field fixture scan with correct normalization, 4-field fill verified in live DOM → OK.
-- Extension unit (`pnpm --filter @veya/extension test:unit`): 8/8 logic tests (jobFromHeuristics, buildPlan, fillableAnswers) → OK.
-- Document-engine unit: 10/10 (resume text parse, pdf-parse@2 roundtrip, PDF compose/paginate, cover-letter mock + PDF) → OK.
+- `pnpm install` → OK. All 12 packages/tasks: typecheck + build → OK (green locally AND on GitHub Actions CI).
+- Unit tests: profile 8/8, security 9/9, prompts 5/5, providers live 3/3 (VEYA_OLLAMA_TEST=1), ai 11/11, form-engine 19/19 (16 + 3 job-site fixture tests), document-engine 11/11 (+1 live Ollama, gated), extension logic 8/8, CLI 14/14 → OK.
+- Extension smoke (`scripts/smoke.mjs`): extension loads in headless Chromium, service worker starts, side panel renders → OK (also the CI smoke job).
+- Extension e2e (`scripts/e2e.mjs`, test manifest, now serving `tests/fixtures/job-sites/workable.html`): 9-field fixture scan with correct normalization, 4-field fill verified in live DOM → OK headless; the side-panel scan step requires a real browser (see Blocked).
 - Document-engine live (`VEYA_OLLAMA_TEST=1`): 1/1 — llama3.2:1b generated a cover letter from profile+job and rendered a valid PDF → OK.
-- Website: headless verification — 0 console errors, no horizontal overflow at 390/1440px, Instrument Sans + Geist Mono loaded, scan-panel animation staggered fills, all 7 sections present → OK.
+- CLI live end-to-end: generated résumé PDF → `veya resume parse` → `veya profile import` → `veya cover-letter` (llama3.2:1b) → valid PDF → OK.
+- CLI distribution: `cd apps/cli && pnpm add --global .` → `veya` on PATH, `veya doctor` all-green (node, profile, extension build, ollama) → OK.
+- Packaging: `pnpm package` → `release/veya-extension.zip` (manifest.json at root + icons + background/content/ui) → OK.
+- Website: headless verification — 0 console errors, no horizontal overflow at 390/1440px, fonts loaded, scan-panel animation staggered fills, all 7 sections present → OK.
+- GitHub Actions CI: `typecheck · build · test` + `extension headless smoke` both green on main.
 
 ## Next Steps
 
-1. Phase 14: `apps/cli` + `veya doctor`.
-2. Verify panel ⇄ SW routing + Phase 11 UI flow in a real (headed) Chrome session; then mark Phase 11 COMPLETE.
-3. Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo.
-4. Phase 16: packaging + final audit.
+1. Verify panel ⇄ SW routing + Phase 11 UI flow in a real (headed) Chrome session; then mark Phase 11 COMPLETE (only remaining blocker).
+2. Future: Web Store listing, cross-site verification, `@veya/cli` publishing story if the CLI becomes a standalone distribution.
 
 ## Important Context
 

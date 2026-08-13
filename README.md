@@ -62,15 +62,29 @@ OpenAI-compatible endpoint) in the options page.
 ### CLI
 
 ```sh
-node apps/cli/dist/index.js doctor
-node apps/cli/dist/index.js profile init
-node apps/cli/dist/index.js resume parse ~/Documents/resume.pdf -o seed.json
-node apps/cli/dist/index.js profile import seed.json
-node apps/cli/dist/index.js cover-letter -c "Acme" -r "Senior Engineer" -o letter.pdf
+pnpm install && pnpm build
+cd apps/cli && pnpm add --global .   # exposes the `veya` command globally
+
+veya doctor
+veya profile init
+veya resume parse ~/Documents/resume.pdf -o seed.json
+veya profile import seed.json
+veya cover-letter -c "Acme" -r "Senior Engineer" -o letter.pdf
 ```
 
 The CLI stores your profile at `~/.veya/profile.json`. `veya doctor` checks the
-environment, the extension build, and Ollama connectivity.
+environment, the extension build, and Ollama connectivity. Within the repo you
+can also run it directly: `node apps/cli/dist/index.js`.
+
+## Packaging
+
+```sh
+pnpm package
+```
+
+Writes `release/veya-extension.zip` (the loadable unpacked extension, `manifest.json`
+at the zip root) and `release/veya-cli.linked.md` (CLI install notes). Release
+artifacts are gitignored.
 
 ## Privacy
 
