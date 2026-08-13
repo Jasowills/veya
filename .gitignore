@@ -32,3 +32,4 @@ pnpm-debug.log*
 # Extension artifacts
 *.zip
 *.crx
+apps/extension/resources/icons/

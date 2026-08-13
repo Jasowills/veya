@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation (MV3 app). AI + form packages complete.
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Next: Phase 11 (application intelligence in extension) and Phase 12 (document engine).
 
 ## Overall Status
 
@@ -13,9 +13,9 @@ Phase 7 — Browser extension foundation (MV3 app). AI + form packages complete.
 - Phase 2 (Branding) — COMPLETE (name cleared)
 - Phase 3 (Architecture) — COMPLETE
 - Phase 4 (Repository initialization) — COMPLETE
-- Phase 5 (Design system & brand identity) — MOSTLY COMPLETE (tokens/logo/logger in @veya/shared)
+- Phase 5 (Design system & brand identity) — COMPLETE (tokens/logo/logger + icon PNG generation)
 - Phase 6 (Career profile engine) — COMPLETE (8 tests)
-- Phase 7 (Browser extension foundation) — IN PROGRESS
+- Phase 7 (Browser extension foundation) — COMPLETE (MV3 shell builds, loads, e2e scan+fill verified)
 - Phase 8 (Form intelligence) — COMPLETE (16 tests, realm-agnostic DOM)
 - Phase 9 (AI provider architecture) — COMPLETE (Ollama live-tested)
 - Phase 10 (Prompt system & context engine) — COMPLETE (5+9+11 tests)
@@ -41,11 +41,12 @@ Phase 7 — Browser extension foundation (MV3 app). AI + form packages complete.
 - @veya/providers: shared HTTP client with typed errors + retry classification, OllamaProvider (LIVE-TESTED against 0.32.5: health, model list, generation all pass), OpenAICompatibleProvider (OpenAI/OpenRouter/Groq/LM Studio), AnthropicProvider + GeminiProvider (implemented, NOT live-tested — no keys), provider registry/buildProvider.
 - @veya/ai: context selector (category → minimal verified subset; demographic/legal get zero profile data), DecisionEngine (fill/preference/saved-answer/derive/generate/ask with saved-answer token matching), AnswerGenerator (provider+prompt orchestration, injection gate), JSON block extractor. 11 tests.
 - @veya/form-engine: keyword normalization (longest-match scoring, camelCase/underscore handling), realm-agnostic DOM scanning (labels/aria/legend/heading/select options/radio groups), React-compatible value setting via native prototype setters + bubbled events. 16 tests.
+- @veya/extension (MV3, `apps/extension`): minimal permissions (`storage`, `activeTab`, `scripting`, `sidePanel`; host_permissions only `localhost:11434`). Side panel is the primary UI (`openPanelOnActionClick`), options page for provider/model/API-key config, on-demand content-script injection via `chrome.scripting` (no broad `content_scripts`). Message protocol content ↔ service worker ↔ UI defined in `src/shared/messages.ts`. Background orchestrates scan → plan (DecisionEngine per field) → fill. Vite split into three sequential builds (UI HTML entries, content IIFE, background ESM) — Vite 8 dropped array configs. Icons rendered from `logo.svg` via Playwright at 16/32/48/128 into `resources/icons`, copied by `scripts/finalize.mjs`. Verified in real Chromium: manifest loads, SW starts, side panel renders, and an e2e run (test-manifest with `http://localhost/*` + `tabs`) scans a 9-field fixture form (correct normalizations incl. WORK_AUTHORIZATION/SPONSORSHIP_REQUIRED/AVAILABILITY) and fills 4 fields into the live DOM.
 
 ## In Progress
 
-- Phase 7: Chrome MV3 extension (manifest, popup, sidepanel, options, content script, service worker, build pipeline).
-- Then: application session bridge (content script ↔ service worker ↔ UI).
+- Phase 11: wire the full application session into the extension (AI job analysis, answer generation with provider health gate, saved answers, review flow).
+- Then: Phase 12 document engine, Phase 13 landing page, Phase 14 CLI.
 
 ## Blocked
 
@@ -80,28 +81,33 @@ None.
 
 - TS 7.0.2 resolves inherited `paths` relative to the child tsconfig, not the declaring base config → path maps must live per-package. Resolved via `tsconfig.typecheck.json` per package.
 - `rootDir` conflicts when typecheck includes external workspace sources → split `tsconfig.json` (build) vs `tsconfig.typecheck.json` (rootDir=repo root, noEmit).
+- Vite 8 no longer accepts array config exports → extension uses three sequential `--config` builds.
+- Extension background/UI flow is functional but the side panel's fill plan is not yet persisted across page navigations (in-memory `scanState`).
 
 ## Unverified Assumptions
 
-- TS 7.0.2 `paths`/`rootDir` split is stable across packages (applied to profile; replicate for all dependent packages).
-- Vite 8 multi-entry lib build for MV3 is compatible with React 19 popup (verify on first build).
+- Vite 8 multi-entry lib build for MV3 is compatible with React 19 popup (VERIFIED on first build + load in Chromium).
 - `pdf-parse@2` API signature in Node CLI (verify when CLI resume parsing is implemented).
-- Ollama `/api/generate` streaming contract unchanged (verify against running 0.32.5 instance).
+- Anthropic/Gemini provider adapters (no API keys to live-test).
+- Side panel opening via action click grants `activeTab` for on-demand content injection (verify in real user flow; e2e used a test manifest with explicit host permission).
 
 ## Tests Performed
 
 - `ollama list` + `GET /api/tags` against localhost:11434 → OK, returns models.
 - gh auth → OK (HTTPS, keyring).
-- `pnpm install` → OK. `@veya/shared`, `@veya/core` typecheck+build → OK.
-- `@veya/profile` typecheck, build, and 8/8 unit tests → OK.
+- `pnpm install` → OK. All 9 packages: typecheck + build → OK.
+- Unit tests: profile 8/8, security 9/9, prompts 5/5, providers live 3/3 (VEYA_OLLAMA_TEST=1), ai 11/11, form-engine 16/16 → OK.
+- Extension smoke (`scripts/smoke.mjs`): extension loads in headless Chromium, service worker starts, side panel renders → OK.
+- Extension e2e (`scripts/e2e.mjs`, test manifest): 9-field fixture scan with correct normalization, 4-field fill verified in live DOM → OK.
 
 ## Next Steps
 
-1. Finish monorepo root config.
-2. Phase 5: brand identity (tokens, logo mark, icon assets).
-3. Phase 6: `packages/profile` schema + storage with unit tests.
-4. Phase 7: extension MV3 shell (manifest, popup, service worker, build pipeline).
-5. Phase 8: form-engine detection/classification with fixture pages + unit tests.
+1. Phase 11: extension application session — AI job analysis (`analyzeJob`), answer generation behind a provider-health gate, saved-answer flow, review UI, persistence of sessions to `chrome.storage.session`.
+2. Phase 12: `packages/document-engine` (resume parse via `pdf-parse@2`, cover-letter compositing, PDF generation).
+3. Phase 13: `apps/website` landing page (frontend-design / impeccable).
+4. Phase 14: `apps/cli` + `veya doctor`.
+5. Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo.
+6. Phase 16: packaging + final audit.
 
 ## Important Context
 

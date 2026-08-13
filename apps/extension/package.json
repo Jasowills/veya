@@ -1,0 +1,37 @@
+{
+  "name": "@veya/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --config vite.config.ui.ts",
+    "build": "node scripts/generate-icons.mjs && vite build --config vite.config.ui.ts && vite build --config vite.config.content.ts && vite build --config vite.config.background.ts && node scripts/finalize.mjs",
+    "typecheck": "tsc -p tsconfig.typecheck.json",
+    "test:unit": "vitest run --passWithNoTests",
+    "test:e2e": "node scripts/e2e.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@veya/ai": "workspace:*",
+    "@veya/core": "workspace:*",
+    "@veya/form-engine": "workspace:*",
+    "@veya/profile": "workspace:*",
+    "@veya/prompts": "workspace:*",
+    "@veya/providers": "workspace:*",
+    "@veya/security": "workspace:*",
+    "@veya/shared": "workspace:*",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/chrome": "^0.2.5",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}
