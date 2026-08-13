@@ -8,6 +8,7 @@ const dir = fileURLToPath(new URL(".", import.meta.url));
 const dist = resolve(dir, "..", "dist");
 const testDist = resolve(dir, "..", ".e2e-dist");
 const logFile = resolve(dir, "..", ".e2e.log");
+const fixtureFile = resolve(dir, "..", "..", "..", "tests", "fixtures", "job-sites", "workable.html");
 
 const log = (...a) => {
   const line = `${new Date().toISOString().slice(11, 19)} ${a.join(" ")}\n`;
@@ -24,35 +25,7 @@ manifest.host_permissions = ["http://localhost/*"];
 if (!manifest.permissions.includes("tabs")) manifest.permissions.push("tabs");
 writeFileSync(resolve(testDist, "manifest.json"), JSON.stringify(manifest, null, 2));
 
-const fixture = `<!doctype html><html><body>
-  <h1>Acme Corporation — Senior Software Engineer — San Francisco</h1>
-  <p>Acme builds developer infrastructure. We are hiring a senior engineer to work on our Rust core platform.</p>
-  <form id="app-form">
-    <label for="first_name">First name</label>
-    <input id="first_name" name="first_name" required />
-    <label for="last_name">Last name</label>
-    <input id="last_name" name="last_name" required />
-    <label for="email">Email address</label>
-    <input id="email" type="email" name="email" required />
-    <label for="company">Current employer</label>
-    <input id="company" name="company" />
-    <label for="start">Earliest start date</label>
-    <input id="start" type="date" name="start" />
-    <label for="work_auth">Are you authorized to work in the US?</label>
-    <select id="work_auth" name="work_auth">
-      <option value="">Select…</option>
-      <option value="yes">Yes</option>
-      <option value="no">No</option>
-    </select>
-    <label for="sponsor">Will you now or in the future require visa sponsorship?</label>
-    <input type="radio" name="sponsor" value="yes" id="sponsor_yes" /><label for="sponsor_yes">Yes</label>
-    <input type="radio" name="sponsor" value="no" id="sponsor_no" /><label for="sponsor_no">No</label>
-    <label for="linkedin">LinkedIn URL</label>
-    <input id="linkedin" name="linkedin_url" />
-    <label for="why">Why do you want to work at Acme?</label>
-    <textarea id="why" name="why"></textarea>
-  </form>
-</body></html>`;
+const fixture = readFileSync(fixtureFile, "utf8");
 
 const server = createServer((req, res) => {
   res.setHeader("content-type", "text/html");

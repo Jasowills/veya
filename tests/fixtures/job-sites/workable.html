@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Acme Corporation — Senior Software Engineer</title>
+</head>
+<body>
+  <h1>Acme Corporation — Senior Software Engineer — San Francisco</h1>
+  <p>Acme builds developer infrastructure. We are hiring a senior engineer to work on our Rust core platform.</p>
+  <form id="app-form">
+    <label for="first_name">First name</label>
+    <input id="first_name" name="first_name" required />
+
+    <label for="last_name">Last name</label>
+    <input id="last_name" name="last_name" required />
+
+    <label for="email">Email address</label>
+    <input id="email" type="email" name="email" required />
+
+    <label for="company">Current employer</label>
+    <input id="company" name="company" />
+
+    <label for="start">Earliest start date</label>
+    <input id="start" type="date" name="start" />
+
+    <label for="work_auth">Are you authorized to work in the US?</label>
+    <select id="work_auth" name="work_auth">
+      <option value="">Select…</option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+
+    <fieldset>
+      <legend>Visa sponsorship</legend>
+      <label><input type="radio" name="sponsor" value="yes" id="sponsor_yes" /> Yes</label>
+      <label><input type="radio" name="sponsor" value="no" id="sponsor_no" /> No</label>
+    </fieldset>
+
+    <label for="linkedin">LinkedIn URL</label>
+    <input id="linkedin" name="linkedin_url" />
+
+    <label for="why">Why do you want to work at Acme?</label>
+    <textarea id="why" name="why"></textarea>
+
+    <button type="submit">Submit application</button>
+  </form>
+</body>
+</html>

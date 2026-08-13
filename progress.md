@@ -50,7 +50,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 
 ## In Progress
 
-- Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo push.
+- Phase 15: fixtures done (`tests/fixtures/job-sites/{workable,greenhouse}.html`, consumed by extension e2e + form-engine jsdom tests). CI workflow added (`.github/workflows/ci.yml`). README added. Remaining: GitHub repo push, then verify CI runs green on the remote.
 
 ## Blocked
 

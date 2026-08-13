@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Orbital Works — Senior Rust Engineer</title>
+  <link rel="stylesheet" href="https://boards.greenhouse.io/assets/site.css" />
+</head>
+<body>
+  <div class="application">
+    <h1>Senior Rust Engineer</h1>
+    <h2>Orbital Works</h2>
+    <p>Orbital Works builds a developer platform for control systems. We are hiring a senior engineer for our Berlin office.</p>
+
+    <form id="grnhse_app">
+      <div class="field">
+        <label for="job_application_first_name">First Name *</label>
+        <input id="job_application_first_name" name="job_application[first_name]" type="text" required />
+      </div>
+      <div class="field">
+        <label for="job_application_last_name">Last Name *</label>
+        <input id="job_application_last_name" name="job_application[last_name]" type="text" required />
+      </div>
+      <div class="field">
+        <label for="job_application_email">Email *</label>
+        <input id="job_application_email" name="job_application[email]" type="email" required />
+      </div>
+      <div class="field">
+        <label for="job_application_phone">Phone</label>
+        <input id="job_application_phone" name="job_application[phone]" type="tel" />
+      </div>
+      <div class="field">
+        <label for="job_application_city">City</label>
+        <input id="job_application_city" name="job_application[location][city]" type="text" />
+      </div>
+      <div class="field">
+        <label for="job_application_linkedin">LinkedIn URL</label>
+        <input id="job_application_linkedin" name="job_application[url][linkedin]" type="url" />
+      </div>
+      <div class="field">
+        <label for="job_application_github">GitHub URL</label>
+        <input id="job_application_github" name="job_application[url][github]" type="url" />
+      </div>
+      <div class="field">
+        <label for="job_application_website">Website / Portfolio</label>
+        <input id="job_application_website" name="job_application[url][website]" type="url" />
+      </div>
+      <div class="field">
+        <label for="job_application_salary">What are your salary expectations?</label>
+        <input id="job_application_salary" name="job_application[salary]" type="text" />
+      </div>
+      <div class="field">
+        <label for="job_application_start_date">Earliest start date</label>
+        <input id="job_application_start_date" name="job_application[start_date]" type="date" />
+      </div>
+      <div class="field">
+        <label for="job_application_why">Why are you interested in Orbital Works?</label>
+        <textarea id="job_application_why" name="job_application[why]" rows="6"></textarea>
+      </div>
+
+      <div class="field">
+        <p class="label">What is your gender? (EEO)</p>
+        <select id="job_application_gender" name="job_application[gender]">
+          <option value="">Select…</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="nonbinary">Non-binary</option>
+          <option value="decline">Decline to self-identify</option>
+        </select>
+      </div>
+      <div class="field">
+        <p class="label">Veteran status (EEO)</p>
+        <select id="job_application_veteran" name="job_application[veteran_status]">
+          <option value="">Select…</option>
+          <option value="protected">I identify as a protected veteran</option>
+          <option value="not">I am not a protected veteran</option>
+          <option value="decline">Decline to self-identify</option>
+        </select>
+      </div>
+      <div class="field">
+        <p class="label">Disability status (EEO)</p>
+        <select id="job_application_disability" name="job_application[disability_status]">
+          <option value="">Select…</option>
+          <option value="yes">I have a disability</option>
+          <option value="no">I do not have a disability</option>
+          <option value="decline">Decline to self-identify</option>
+        </select>
+      </div>
+
+      <button type="submit">Submit Application</button>
+    </form>
+  </div>
+</body>
+</html>
