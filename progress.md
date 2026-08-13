@@ -5,7 +5,7 @@
 
 ## Current Phase
 
-Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phase 12 (document engine) COMPLETE. Next: Phase 13 (landing page), with Phase 11's panel⇄SW flow needing a real-browser pass.
+Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2e scan+fill passes). Phase 12 (document engine) COMPLETE. Phase 13 (landing page) COMPLETE. Next: Phase 14 (CLI), with Phase 11's panel⇄SW flow needing a real-browser pass.
 
 ## Overall Status
 
@@ -21,7 +21,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Phase 10 (Prompt system & context engine) — COMPLETE (5+9+11 tests)
 - Phase 11 (Application intelligence) — PARTIAL (extension orchestration logic extracted to `src/background/logic.ts`, unit-tested; background handles analyzeJob/generate/profile flows; side panel shows job context + AI draft button. Panel ⇄ SW routing not yet verified in a real browser — headless Playwright cannot deliver page→SW messages)
 - Phase 12 (Document engine) — COMPLETE
-- Phase 13 (Landing page) — PENDING
+- Phase 13 (Landing page) — COMPLETE
 - Phase 14 (CLI & local companion) — PENDING
 - Phase 15 (Testing, security, docs, CI) — PENDING
 - Phase 16 (Packaging & final audit) — PENDING
@@ -44,11 +44,12 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - @veya/extension (MV3, `apps/extension`): minimal permissions (`storage`, `activeTab`, `scripting`, `sidePanel`; host_permissions only `localhost:11434`). Side panel is the primary UI (`openPanelOnActionClick`), options page for provider/model/API-key config, on-demand content-script injection via `chrome.scripting` (no broad `content_scripts`). Message protocol content ↔ service worker ↔ UI defined in `src/shared/messages.ts`. Background orchestrates scan → plan (DecisionEngine per field) → fill. Vite split into three sequential builds (UI HTML entries, content IIFE, background ESM) — Vite 8 dropped array configs. Icons rendered from `logo.svg` via Playwright at 16/32/48/128 into `resources/icons`, copied by `scripts/finalize.mjs`. Verified in real Chromium: manifest loads, SW starts, side panel renders, and an e2e run (test-manifest with `http://localhost/*` + `tabs`) scans a 9-field fixture form (correct normalizations incl. WORK_AUTHORIZATION/SPONSORSHIP_REQUIRED/AVAILABILITY) and fills 4 fields into the live DOM.
 - Phase 11 extension logic: `src/background/logic.ts` holds the pure, chrome-free functions `jobFromHeuristics` (title/URL → company/role, drops job-board subdomains like `careers.`), `buildPlan` (DecisionEngine per field → FieldDecision), and `fillableAnswers` (edited > draft > decision). Background service worker wires them to `analyzeJob` (AI, heuristic fallback), `generateAnswer` (DecisionEngine gate → AnswerGenerator with job context), and profile handlers (get/save/export/import). Side panel renders job context + AI-draft buttons; options page gained a tabbed `ProfileEditor` (basics/experience/skills/preferences) with import/export. 8 unit tests.
 - @veya/document-engine: `parseResumePdf` (text extraction via `pdf-parse@2` — API now VERIFIED via a pdf-lib→pdf-parse roundtrip test) + `parseResumeText` (heuristic section detection: contact/skills/experience/education, experience block grouping, date/bullet recognition), `generateCoverLetter` (profile + application → @veya/prompts cover-letter builder → any AIProvider), `composeTextPdf`/`composeCoverLetterPdf` (greedy-wrapped, paginated PDF via `pdf-lib`, US Letter default, custom margins/fonts). 10 unit tests + 1 live Ollama test (llama3.2:1b → cover letter → valid PDF).
+- @veya/website (`apps/website`): React 19 + Vite landing page in the "technical instrument" aesthetic — graphite + lime tokens from @veya/shared, Instrument Sans + Geist Mono, blueprint-grid hero, and an animated hero visual: a mock Veya side panel that sweeps a scan beam over a job form and fills each field (staggered CSS animations). Sections: hero, trust strip, how-it-works (3 steps), feature grid, privacy panel (/no-backend · /no-training · /no-guessing · /byok), open source, install CTA, footer. Responsive (2-col → 1-col), `prefers-color-scheme` light/dark, reduced-motion aware. Verified headless: no console errors, no horizontal overflow at 390/1440px, fonts loaded, animations run. Screenshots: `apps/website/scripts/screenshot.mjs`.
 
 ## In Progress
 
-- Phase 13: landing page (`apps/website`), then Phase 14 CLI.
-- Phase 11 cleanup: verify panel ⇄ SW routing + full UI flow in a real (headed) Chrome session.
+- Phase 14: CLI + local companion (`apps/cli`, commander, `veya doctor`).
+- Phase 13 review: landing page built + programmatically verified; visual QA by eye is still pending (screenshots at /tmp/veya-site-*.png, preview served on :4175).
 
 ## Blocked
 
@@ -106,14 +107,14 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - Extension unit (`pnpm --filter @veya/extension test:unit`): 8/8 logic tests (jobFromHeuristics, buildPlan, fillableAnswers) → OK.
 - Document-engine unit: 10/10 (resume text parse, pdf-parse@2 roundtrip, PDF compose/paginate, cover-letter mock + PDF) → OK.
 - Document-engine live (`VEYA_OLLAMA_TEST=1`): 1/1 — llama3.2:1b generated a cover letter from profile+job and rendered a valid PDF → OK.
+- Website: headless verification — 0 console errors, no horizontal overflow at 390/1440px, Instrument Sans + Geist Mono loaded, scan-panel animation staggered fills, all 7 sections present → OK.
 
 ## Next Steps
 
-1. Verify panel ⇄ SW routing + Phase 11 UI flow in a real (headed) Chrome session; then mark Phase 11 COMPLETE.
-2. Phase 13: `apps/website` landing page (frontend-design / impeccable).
-3. Phase 14: `apps/cli` + `veya doctor`.
-4. Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo.
-5. Phase 16: packaging + final audit.
+1. Phase 14: `apps/cli` + `veya doctor`.
+2. Verify panel ⇄ SW routing + Phase 11 UI flow in a real (headed) Chrome session; then mark Phase 11 COMPLETE.
+3. Phase 15: fixtures (`tests/fixtures/job-sites`), CI, docs, GitHub repo.
+4. Phase 16: packaging + final audit.
 
 ## Important Context
 
