@@ -22,10 +22,10 @@ export function LogoMark({ size = 24, className, style }: LogoMarkProps) {
       <path d="M13 12 C 18 20, 25 30, 32 46" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
       <path d="M32 12 L 32 46" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
       <path d="M51 12 C 46 20, 39 30, 32 46" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
-      <path d="M32 47 L 32 51" stroke="var(--veya-accent, #c8ff5a)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M32 47 L 32 51" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
       <path
         d="M27.5 51 L 32 57 L 36.5 51"
-        stroke="var(--veya-accent, #c8ff5a)"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"

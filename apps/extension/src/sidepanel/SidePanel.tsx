@@ -32,6 +32,20 @@ function entryValue(p: PlanEntry): string {
   return (p.draft ?? p.edited ?? p.decision.value ?? "").toString();
 }
 
+function GearIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" aria-hidden="true" focusable="false">
+      <path
+        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function SidePanel() {
   const [status, setStatus] = useState<Status>(null);
   const [scan, setScan] = useState<ScanState | null>(null);
@@ -126,9 +140,20 @@ export function SidePanel() {
         <span className="sp-title">
           <Wordmark size={15} />
         </span>
-        <span className={`sp-status ${status?.healthy ? "sp-online" : "sp-offline"}`}>
-          {status?.provider ?? "provider"}
-          {status?.model ? ` · ${status.model}` : ""}
+        <span className="sp-header-right">
+          <span className={`sp-status ${status?.healthy ? "sp-online" : "sp-offline"}`}>
+            {status?.provider ?? "provider"}
+            {status?.model ? ` · ${status.model}` : ""}
+          </span>
+          <button
+            type="button"
+            className="sp-settings"
+            onClick={() => void chrome.runtime.openOptionsPage()}
+            aria-label="Settings"
+            title="Settings — model, profile, import/export"
+          >
+            <GearIcon />
+          </button>
         </span>
       </header>
 

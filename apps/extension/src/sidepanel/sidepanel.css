@@ -20,6 +20,12 @@
   color: var(--veya-text);
 }
 
+.sp-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .sp-status {
   display: inline-flex;
   align-items: center;
@@ -44,6 +50,29 @@
 
 .sp-status.sp-offline::before {
   background: var(--veya-danger);
+}
+
+.sp-settings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--veya-border);
+  border-radius: var(--veya-radius-sm);
+  background: var(--veya-surface);
+  color: var(--veya-text-secondary);
+  transition:
+    color var(--veya-motion-fast) ease,
+    border-color var(--veya-motion-fast) ease,
+    background var(--veya-motion-fast) ease;
+}
+
+.sp-settings:hover {
+  color: var(--veya-text);
+  border-color: var(--veya-border-strong);
+  background: var(--veya-surface-hover);
 }
 
 .sp-page {

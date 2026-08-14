@@ -8,9 +8,10 @@ const root = resolve(dir, "..");
 const outDir = resolve(root, "resources/icons");
 mkdirSync(outDir, { recursive: true });
 
-const mark = readFileSync(resolve(root, "../../packages/shared/src/logo.svg"), "utf8")
-  .replace(/stroke="currentColor"/g, 'stroke="#F5F4EF"')
-  .replace(/var\(--veya-accent, #C8FF5A\)/g, "#C8FF5A");
+const mark = readFileSync(resolve(root, "../../packages/shared/src/logo.svg"), "utf8").replace(
+  /stroke="currentColor"/g,
+  'stroke="#F5F4EF"',
+);
 
 const SIZES = [16, 32, 48, 128];
 
