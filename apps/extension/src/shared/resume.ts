@@ -49,3 +49,20 @@ export function isProfileSet(p: CareerProfile): boolean {
     p.education.length > 0
   );
 }
+
+/**
+ * Apply a resume-extracted seed on top of an existing profile. The resume
+ * owns the career sections (identity, contact, skills, experience, education);
+ * everything else (preferences, saved answers, writing style, projects, …) is
+ * preserved. A section is only replaced when the resume actually produced one.
+ */
+export function mergeResumeIntoProfile(current: CareerProfile, seed: CareerProfile): CareerProfile {
+  return {
+    ...current,
+    identity: seed.identity ?? current.identity,
+    contact: seed.contact?.email ? seed.contact : current.contact,
+    skills: seed.skills.length > 0 ? seed.skills : current.skills,
+    experience: seed.experience.length > 0 ? seed.experience : current.experience,
+    education: seed.education.length > 0 ? seed.education : current.education,
+  };
+}

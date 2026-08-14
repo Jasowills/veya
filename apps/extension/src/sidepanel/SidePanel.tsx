@@ -3,7 +3,7 @@ import { brand, Wordmark } from "@veya/shared";
 import type { CareerProfile } from "@veya/profile";
 import type { GenerateOutcome, PlanEntry, Request, Response, ScanState } from "../shared/messages.js";
 import { Button, Card, EmptyState, Pill, Spinner, type StatusTone } from "../ui/components.js";
-import { isProfileSet } from "./resume.js";
+import { isProfileSet } from "../shared/resume.js";
 import { SetupWizard } from "./setup-wizard.js";
 
 type Status = { provider: string; model?: string; healthy: boolean } | null;

@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import type { CareerProfile } from "@veya/profile";
 import type { Request, Response } from "../shared/messages.js";
 import { Button, Spinner } from "../ui/components.js";
-import { resumeFileToProfile } from "./resume.js";
+import { resumeFileToProfile } from "../shared/resume.js";
 
 interface ExpDraft {
   id: string;
