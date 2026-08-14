@@ -147,10 +147,11 @@ function ArrowIcon() {
   );
 }
 
-function PlayIcon() {
+function ReplayIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-      <path d="M8.5 5.5 L19 12 L8.5 18.5 Z" {...S} />
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+      <path d="M4.5 12a7.5 7.5 0 1 1 2.2 5.3" {...S} />
+      <path d="M4.5 17.5v-5h5" {...S} />
     </svg>
   );
 }
@@ -287,55 +288,122 @@ function Nav() {
   );
 }
 
-/* Demo slot — the produced career-service film (see /vey a-demo). */
-function DemoSlot() {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
+/* ------------------------------------------------------------------ */
+/* Demo slot — the product, in work.                                   */
+/* An animated miniature of the extension running on a job page,       */
+/* looping live in the DOM (no video): a scan, five fields verify,     */
+/* the open question gets an AI draft, two sensitive fields stay       */
+/* yours. All motion is a single CSS keyframe loop.                    */
+/* ------------------------------------------------------------------ */
 
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    v.addEventListener("play", onPlay);
-    v.addEventListener("pause", onPause);
-    return () => {
-      v.removeEventListener("play", onPlay);
-      v.removeEventListener("pause", onPause);
-    };
-  }, []);
+const DEMO_FIELDS = [
+  { label: "First name", value: "Ada Lovelace", kind: "ok" },
+  { label: "Email", value: "ada@example.com", kind: "ok" },
+  { label: "Years of Rust", value: "8", kind: "ok" },
+  { label: "LinkedIn", value: "in/ada", kind: "ok" },
+  { label: "Availability", value: "2 weeks", kind: "ok" },
+  { label: "Why this role?", value: "", kind: "draft" },
+  { label: "Work authorization", value: "", kind: "you" },
+  { label: "Salary expectation", value: "", kind: "you" },
+];
 
-  const toggle = () => {
-    const v = ref.current;
-    if (!v) return;
-    if (v.paused) void v.play();
-    else v.pause();
-  };
+const stagger = (i: number) => `-${(1.66 + i * 0.55).toFixed(2)}s`;
 
+function ProductDemo() {
   return (
-    <div className="demo" data-playing={playing}>
-      <div className="demo__screen" role="group" aria-label="Veya product demo film">
-        <video
-          ref={ref}
-          className="demo__video"
-          src="/demo/veya-demo.mp4"
-          poster="/demo/veya-demo-poster.jpg"
-          preload="metadata"
-          playsInline
-          onClick={toggle}
-        />
+    <div className="pdemo">
+      <div className="pdemo__browser">
+        <div className="pdemo__chrome">
+          <span className="pdemo__dots" aria-hidden="true" />
+          <span className="pdemo__url">jobs.acme.com/apply/staff-engineer</span>
+        </div>
+        <div className="pdemo__title">Staff Engineer — Apply</div>
+        <div className="pdemo__org">ACME CORP · SENIOR · REMOTE-FIRST</div>
+        <div className="pdemo__fields">
+          {DEMO_FIELDS.map((fd, i) => (
+            <div className="pdemo__field" style={{ animationDelay: stagger(i) }} key={fd.label}>
+              <span className="pdemo__label">{fd.label}</span>
+              <span className="pdemo__input">
+                {fd.kind === "ok" && <span className="pdemo__val">{fd.value}</span>}
+                {fd.kind === "draft" && (
+                  <span className="pdemo__val pdemo__type">8 yrs at scale</span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+        <span className="pdemo__beam" aria-hidden="true" />
+        <div className="pdemo__tabbar">
+          <span>FIELD 8 — AUTO-DETECTED</span>
+          <span>YOU REVIEW</span>
+        </div>
+      </div>
+
+      <div className="pdemo__panel">
+        <div className="pdemo__panelhead">
+          <span className="pdemo__mark">V</span>
+          <span className="pdemo__brand">VEYA</span>
+          <span className="pdemo__sub">CAREER SERVICE</span>
+          <span className="pdemo__local">LOCAL</span>
+        </div>
+        <div className="pdemo__status">
+          <span className="pdemo__pill pdemo__pill--ready">AI READY</span>
+          <span className="pdemo__pill pdemo__pill--scanning">SCANNING…</span>
+          <span className="pdemo__pill pdemo__pill--mapped">FIELDS MAPPED</span>
+          <span className="pdemo__pill pdemo__pill--done">READY</span>
+          <span className="pdemo__btn">SCAN FORM</span>
+          <span className="pdemo__btn pdemo__btn--done">DONE — 8/8</span>
+        </div>
+        <div className="pdemo__caption">8 FIELDS DETECTED — FROM THIS PAGE</div>
+        <div className="pdemo__rows">
+          {DEMO_FIELDS.map((fd, i) => (
+            <div className="pdemo__row" style={{ animationDelay: stagger(i) }} key={fd.label}>
+              <span className="pdemo__rlabel">{fd.label}</span>
+              <span className="pdemo__rval">
+                {fd.kind === "ok" ? fd.value : fd.kind === "draft" ? "AI draft" : "—"}
+              </span>
+              <span className={`pdemo__chip pdemo__chip--${fd.kind}`}>
+                {fd.kind === "ok" ? "✓" : fd.kind === "draft" ? "DRAFT" : "FOR YOU"}
+              </span>
+            </div>
+          ))}
+          <div className="pdemo__draft">
+            <span className="pdemo__draft-label">WHY THIS ROLE? — AI DRAFT</span>
+            <span className="pdemo__draft-text pdemo__type">I'd pick your stack.</span>
+            <span className="pdemo__draft-note">REVIEW BEFORE SUBMIT · YOU DECIDE</span>
+          </div>
+          <div className="pdemo__foot">
+            <div className="pdemo__foot-line">5 VERIFIED · 1 DRAFTED · 2 FOR YOU</div>
+            <div className="pdemo__foot-note">NOTHING LEAVES THIS MACHINE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoSlot() {
+  const [cycle, setCycle] = useState(0);
+  return (
+    <div className="demo">
+      <div
+        className="demo__screen"
+        role="img"
+        aria-label="Veya scans an Acme job form on the page: five fields verified, the open question drafted, two sensitive fields left for you."
+      >
+        <ProductDemo key={cycle} />
         <button
-          className="demo__play"
+          className="demo__replay mono"
           type="button"
-          aria-label={playing ? "Pause the demo" : "Watch the demo"}
-          onClick={toggle}
+          aria-label="Replay the demo"
+          onClick={() => setCycle((c) => c + 1)}
         >
-          <PlayIcon />
+          <ReplayIcon /> REPLAY
         </button>
         <span className="demo__plate mono">
-          {playing ? "VEYA · CAREER SERVICE" : "WATCH THE DEMO"} <ArrowIcon />
+          THE PRODUCT, IN WORK <ArrowIcon />
         </span>
-        <span className="demo__tag mono">0:25</span>
+        <span className="demo__tag mono">LIVE</span>
       </div>
     </div>
   );
