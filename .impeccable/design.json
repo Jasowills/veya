@@ -20,7 +20,7 @@
       "accent-italic": { "displayName": "Serif Accent", "purpose": "The emotive phrase inside a display heading; Instrument Serif italic only." }
     },
     "shadows": [
-      { "name": "board-ambient", "value": "0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35)", "purpose": "The single shadow in the system, under the hero departure board." }
+      { "name": "instrument-ambient", "value": "0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35)", "purpose": "The only shadows in the system, under the two hero instruments: the demo slot and the departure board." }
     ],
     "motion": [
       { "name": "ease-standard", "value": "cubic-bezier(0.22, 0.8, 0.2, 1)", "purpose": "Default easing for transitions and reveals." },
@@ -31,9 +31,11 @@
       { "name": "board-mobile", "value": "640px" },
       { "name": "hero-stack", "value": "900px" },
       { "name": "route-stack", "value": "860px" },
+      { "name": "finale-stack", "value": "860px" },
       { "name": "trust-2col", "value": "800px" },
       { "name": "ledger-1col", "value": "760px" },
-      { "name": "nav-links-hide", "value": "640px" }
+      { "name": "trust-1col", "value": "420px" },
+      { "name": "nav-links-hide", "value": "720px" }
     ]
   },
   "components": [
@@ -62,6 +64,14 @@
       "css": ".ds-board { border: 1px solid rgba(23,20,14,0.32); background: #e9e5d8; font-family: 'Archivo', sans-serif; } .ds-board-row { display: grid; grid-template-columns: 60px 1fr 1.3fr 42px; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid rgba(23,20,14,0.14); } .ds-time { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-variant-numeric: tabular-nums; color: #17140e; } .ds-svc { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-dest { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #575146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-st { display: inline-flex; align-items: center; justify-content: center; width: 21px; height: 21px; border: 1px solid rgba(23,20,14,0.32); border-radius: 3px; color: #17140e; } @media (max-width: 640px) { .ds-board-row { grid-template-columns: 40px 1fr 30px; grid-template-areas: \"time svc st\" \"time dest st\"; row-gap: 2px; } }"
     },
     {
+      "name": "Demo Video Slot",
+      "kind": "card",
+      "refersTo": "board",
+      "description": "Hero second column: 16:9 framed window with a sharp 68px ink play button and mono labels.",
+      "html": "<div class=\"ds-demo\"><button class=\"ds-play\" aria-label=\"Watch the demo\"><svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8.5 5.5 L19 12 L8.5 18.5 Z\"/></svg></button><span class=\"ds-plate\">WATCH THE DEMO</span><span class=\"ds-tag\">01:42</span></div>",
+      "css": ".ds-demo { position: relative; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(23,20,14,0.32); background: #e9e5d8; box-shadow: 0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35); background-image: repeating-linear-gradient(to right, transparent 0, transparent 55px, rgba(23,20,14,0.05) 55px, rgba(23,20,14,0.05) 56px), repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(23,20,14,0.04) 31px, rgba(23,20,14,0.04) 32px); } .ds-play { width: 68px; height: 68px; border: 1px solid #17140e; border-radius: 3px; background: #17140e; color: #f1eee6; cursor: pointer; transition: transform 0.2s cubic-bezier(0.22,0.8,0.2,1), background 0.2s; } .ds-play:hover { transform: scale(1.06); background: #2a261c; } .ds-plate { position: absolute; left: 18px; bottom: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #17140e; } .ds-tag { position: absolute; right: 18px; bottom: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #575146; }"
+    },
+    {
       "name": "Line Label",
       "kind": "chip",
       "refersTo": "button-ghost",
@@ -80,21 +90,22 @@
   ],
   "narrative": {
     "northStar": "The Career Timetable",
-    "overview": "Veya presents the job application as a scheduled journey — a warm-paper Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome: warm paper and warm ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine. Density is calm and editorial: large grotesque display with a serif-italic counterpoint, tabular mono data set in ruled grids, and generous paper. Depth comes from tonal layering and a single soft shadow under the hero board, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.",
+    "overview": "Veya presents the job application as a scheduled journey — a warm-paper Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome: warm paper and warm ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine. The layout is expansive and premium: a 1400px measure, a full-width departure board as the station floor beneath a headline + demo-video-slot hero, a full-bleed inverted ink privacy band, and a full-bleed deep-paper closing band that merges open source and install. Depth comes from tonal layering and a single soft shadow under the hero instruments, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.",
     "keyCharacteristics": [
       "Warm monochrome only — paper and ink ramps, never gray, never hue.",
       "Hairline rules (1px) define structure; borders are lines, not boxes.",
       "One display voice (Archivo) with an Instrument Serif italic counterpoint for the emotive phrase.",
       "Tabular IBM Plex Mono reserved for data, times, labels, and line designations.",
       "Sharp corners (2–3px); no pill shapes, no soft rounded rectangles.",
-      "One authored motion moment: the live departure board."
+      "One authored motion moment: the live departure board.",
+      "Expansive, premium presence: 1400px measure, full-bleed bands, one demo-video slot in the hero."
     ],
     "rules": [
       { "name": "The Monochrome Rule", "body": "Warm paper and ink only. Any departure from the ramp (a hue, a glow, a pure gray) is a defect, not an accent. Status is communicated by fill vs. outline (solid = verified, dashed = draft), never by color.", "section": "colors" },
       { "name": "The Inverted Moment Rule", "body": "The ink panel is used exactly once, for privacy — the page's single moment of gravity. Everything else lives on paper.", "section": "colors" },
       { "name": "The One Voice Rule", "body": "Archivo carries every word of information; the serif italic appears only in the emotive phrase of a display heading. A second information voice is not available.", "section": "typography" },
       { "name": "The Data Voice Rule", "body": "Times, values, statuses, and labels are set in IBM Plex Mono with tabular numerals. Mono never types a headline and a headline is never set in mono.", "section": "typography" },
-      { "name": "The Single Shadow Rule", "body": "The board is the only object that casts a shadow. Depth everywhere else is tonal.", "section": "elevation" }
+      { "name": "The Single Shadow Rule", "body": "Only the two hero instruments (the demo slot and the board) cast shadows. Depth everywhere else is tonal.", "section": "elevation" }
     ],
     "dos": [
       "Do stay within the warm paper/ink ramp; tint secondary text from ink, never gray.",

@@ -101,6 +101,7 @@ Density is calm and editorial: large grotesque display with a serif-italic count
 - Tabular IBM Plex Mono reserved for data, times, labels, and line designations.
 - Sharp corners (2–3px); no pill shapes, no soft rounded rectangles.
 - One authored motion moment: the live departure board.
+- Expansive, premium presence: 1400px measure, full-bleed bands, one demo-video slot in the hero.
 
 ## Colors
 
@@ -148,22 +149,24 @@ A warm paper-and-ink monochrome: every neutral is a warm-brown derivative, never
 
 ## Layout
 
-A 1160px page measure, centered, with `max(24px, (100vw - 1160px) / 2)` gutters everywhere. Sections breathe: clamp(72px, 9vw, 120px) of vertical padding per section, hairline rules between major sections.
+An expansive 1400px page measure, centered, with `max(32px, (100vw - 1400px) / 2)` gutters everywhere. Sections breathe: clamp(84px, 10vw, 140px) of vertical padding per section, hairline rules between major sections. Anchored sections get `scroll-margin-top: 96px` for the sticky nav.
 
-- **Hero:** two columns — copy left, departure board right (grid 1fr / 0.92fr); collapses to one column at ≤900px with the board leading (`order: -1`).
-- **Trust strip:** four guarantee entries divided by vertical hairlines; two columns at ≤800px.
+- **Hero:** headline copy left + demo-video slot right (grid 1.1fr / 0.9fr), then the full-width departure board below as the station floor — the board is an instrument, not a sidebar widget. Stacks to one column at ≤900px.
+- **Trust strip:** four guarantee entries divided by vertical hairlines; two columns at ≤800px, one at ≤420px.
 - **Route (how it works):** three stops along a horizontal hairline track; collapses to a vertical track at ≤860px.
 - **Features ledger:** a strict 2-column ruled grid (border-top/left on the container, border-bottom/right on each cell); single column at ≤760px.
-- **Board:** desktop grid `60px 1fr 1.3fr 42px` (dep / field / value / status); mobile grid `40px 1fr 30px` with the field stacked over the value, headers hidden at ≤640px.
-- **Spacing rhythm:** tight groups (gap 8–20px), generous section separation, always more space above a heading than below it. The route, ledger, and CTA blocks start at clamp(44px, 6vw, 64px) below their titles.
+- **Privacy:** a full-bleed inverted ink band spanning edge-to-edge with a 1400px inner measure.
+- **Finale:** a full-bleed deep-paper closing band merging open source (left) and install (right), divided by a vertical hairline; stacks with a horizontal rule at ≤860px.
+- **Board:** desktop grid `76px 1fr 1.3fr 48px` (dep / field / value / status); mobile grid `44px 1fr 32px` with the field stacked over the value, headers hidden at ≤640px.
+- **Spacing rhythm:** tight groups (gap 10–16px), generous section separation, always more space above a heading than below it. The route, ledger, and finale CTA blocks start at clamp(48px, 6vw, 72px) below their titles.
 
 ## Elevation & Depth
 
-Tonal layering is the depth system — paper → raised paper → deep paper build surfaces; the ink panel is the deepest tone and the page's single inversion. Shadows are ambient, not structural, and exist exactly once: under the hero departure board, `box-shadow: 0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35)`. Interactive elements hover by filling (ghost button fills with ink) or by a hairline darkening, never by growing a shadow.
+Tonal layering is the depth system — paper → raised paper → deep paper build surfaces; the ink panel is the deepest tone and the page's single inversion. Shadows are ambient, not structural, and exist exactly twice, both hero instruments: under the demo slot and the departure board, `box-shadow: 0 1px 0 rgba(23,20,14,0.06), 0 24px 60px -28px rgba(23,20,14,0.35)`. Interactive elements hover by filling (ghost button fills with ink) or by a hairline darkening, never by growing a shadow.
 
 ### Named Rules
 
-**The Single Shadow Rule.** The board is the only object that casts a shadow. Depth everywhere else is tonal.
+**The Single Shadow Rule.** Only the two hero instruments (the demo slot and the board) cast shadows. Depth everywhere else is tonal.
 
 ## Shapes
 
@@ -173,20 +176,23 @@ Sharp, hairline, mechanical. Corners are near-square: 3px for buttons, icons, st
 
 ### Buttons
 - **Shape:** sharp corner (3px), no shadow, no pill.
-- **Primary:** ink background, paper text, 14px 28px, weight 650. Hover: raised ink (#2a261c).
-- **Ghost:** 1px strong-rule border, ink text, 11px 22px. Hover: fills with ink, text goes paper.
-- **Focus:** 2px ink outline, 3px offset. Icons inside buttons are drawn SVG, 17px, same stroke system.
+- **Primary:** ink background, paper text, 16px 30px (18px 36px at lg), weight 650. Hover: raised ink (#2a261c) + 1px lift.
+- **Ghost:** 1px strong-rule border, ink text, 15px 30px. Hover: fills with ink, text goes paper + 1px lift.
+- **Focus:** 2px ink outline, 3px offset. Icons inside buttons are drawn SVG, 18px, same stroke system.
 
 ### The Departure Board (signature component)
-The hero's thesis — a live departure board where form fields are services leaving the station.
+The station floor — the hero's thesis, full width below the copy. A live departure board where form fields are services leaving the station.
 - **Chrome:** deep-paper header with station name + LIVE pulse; ruled column head `DEP / FIELD / VERIFIED VALUE / ST`; foot strip `LOCAL SERVICE · 8 fields detected · 5 verified · 1 drafted · nothing leaves this machine`.
-- **Rows:** paper-raised, hairline-divided. Column values set in IBM Plex Mono; statuses are boxed stroke glyphs that flip from hollow to solid. Departure times tick with the station clock (one minute every 6s).
+- **Rows:** paper-raised, hairline-divided, generous 15px padding. Column values set in IBM Plex Mono; statuses are boxed stroke glyphs that flip from hollow to solid. Departure times tick with the station clock (one minute every 6s).
 - **Motion:** rows reveal staggered, statuses check in, a 1px ink scan line sweeps the board once. The whole board halts under `prefers-reduced-motion` (rows static, scan hidden, clock frozen).
-- **Responsive:** on ≤640px the row grid becomes `40px 1fr 30px` with the field stacked over the value and the column head hidden.
+- **Responsive:** on ≤640px the row grid becomes `44px 1fr 32px` with the field stacked over the value and the column head hidden.
+
+### Demo Video Slot
+The hero's second column: a 16:9 framed window (raised paper, grid texture) holding a sharp-cornered 68px ink play button, a `WATCH THE DEMO` mono plate, and a `01:42` tag. The button is disabled until the produced demo video is wired in; the slot is the affordance, not the content.
 
 ### Navigation
-- Sticky masthead, paper at 88% + backdrop blur, hairline underline. Links are IBM Plex Mono 12px uppercase with a 1px ink underline that scales in from the left on hover. Links hide at ≤640px, leaving the wordmark and CTA.
-- Above it, a 10px ink station ticker: "VEYA · CAREER SERVICES — LOCAL-ONLY — NO ACCOUNT — BRING YOUR OWN MODEL".
+- Sticky masthead, paper at 88% + backdrop blur, hairline underline. Links are IBM Plex Mono 13px uppercase with a 1px ink underline that scales in from the left on hover. Links hide at ≤720px, leaving the wordmark and CTA.
+- Above it, a 10.5px ink station ticker: "VEYA · CAREER SERVICES — LOCAL-ONLY — NO ACCOUNT — BRING YOUR OWN MODEL" with a right-aligned `BOARD READY` pulse.
 
 ### Line Labels
 The kicker reborn as timetable furniture: an outlined route marker + IBM Plex Mono 11.5px uppercase designation (e.g. "HOW IT WORKS", "THE ENGINE", "PRIVACY, FIRST"). Left-aligned above section titles; centered in the install block.

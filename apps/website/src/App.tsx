@@ -8,13 +8,13 @@ import { LogoMark, Wordmark } from "@veya/shared";
    OWN-WORLD: warm paper + ink monochrome; hairline rules; tabular mono
    data; one grotesque voice with a serif-italic counterpoint; a single
    authored moment — the board ticking.
-   STORY: visitor reads "local service, nothing leaves this machine",
-   watches fields depart the board as verified/filled/drafted, and installs.
-   FIRST VIEWPORT: slim station ticker, masthead, then a two-column spread
-   — headline left, live departure board right (board leads on mobile).
+   LAYOUT: expansive measure (1400px). Hero = headline left, demo-video
+   slot right, full-width departure board below as the station floor.
+   Full-bleed ink privacy band; full-bleed deep-paper closing band that
+   merges open source + install. 6 content sections.
    FORM: Swiss timetable (candidate 6); seed key 2bad5a15.
-   FINISH: unreviewed and undocumented is unfinished; this build ends with
-   the finish review, the verdict, and DESIGN.md.
+   FINISH: unreviewed and undocumented is unfinished; this build ends
+   with the finish review, the verdict, and DESIGN.md.
    ===================================================================== */
 
 function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
@@ -147,8 +147,16 @@ function ArrowIcon() {
   );
 }
 
+function PlayIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M8.5 5.5 L19 12 L8.5 18.5 Z" {...S} />
+    </svg>
+  );
+}
+
 /* ------------------------------------------------------------------ */
-/* The departure board — the hero thesis                              */
+/* The departure board — the station floor                            */
 /* ------------------------------------------------------------------ */
 
 const FIELD_ROWS = [
@@ -179,7 +187,7 @@ function DepartureBoard() {
     <div className="board">
       <div className="board__top">
         <div className="board__station">
-          <LogoMark size={15} />
+          <LogoMark size={16} />
           <span>VEYA</span>
           <span className="board__meta">CAREER SERVICE</span>
         </div>
@@ -252,6 +260,10 @@ function Ticker() {
       <span className="ticker__item ticker__item--dim">LOCAL-ONLY</span>
       <span className="ticker__item ticker__item--dim">NO ACCOUNT</span>
       <span className="ticker__item ticker__item--dim">BRING YOUR OWN MODEL</span>
+      <span className="ticker__ready mono">
+        <span className="board__pulse" />
+        BOARD READY
+      </span>
     </div>
   );
 }
@@ -260,17 +272,35 @@ function Nav() {
   return (
     <header className="nav">
       <a className="nav__brand" href="#top" aria-label="Veya home">
-        <Wordmark size={19} />
+        <Wordmark size={22} />
       </a>
       <nav className="nav__links" aria-label="Primary">
         <a href="#how">how it works</a>
+        <a href="#features">the engine</a>
         <a href="#privacy">privacy</a>
-        <a href="#open-source">open source</a>
+        <a href="#install">get started</a>
       </nav>
       <a className="btn btn--solid" href="#install">
         Get Veya
       </a>
     </header>
+  );
+}
+
+/* Demo slot — wire the produced video in here (see the demo-video skill). */
+function DemoSlot() {
+  return (
+    <div className="demo">
+      <div className="demo__screen" role="img" aria-label="Veya product demo — video coming soon">
+        <button className="demo__play" type="button" aria-label="Watch the demo" disabled>
+          <PlayIcon />
+        </button>
+        <span className="demo__plate mono">
+          WATCH THE DEMO <ArrowIcon />
+        </span>
+        <span className="demo__tag mono">01:42</span>
+      </div>
+    </div>
   );
 }
 
@@ -310,10 +340,14 @@ function Hero() {
           </Reveal>
         </div>
 
-        <Reveal delay={200} className="hero__visual">
-          <DepartureBoard />
+        <Reveal delay={200} className="hero__video">
+          <DemoSlot />
         </Reveal>
       </div>
+
+      <Reveal delay={280} className="hero__board">
+        <DepartureBoard />
+      </Reveal>
     </section>
   );
 }
@@ -422,10 +456,10 @@ function Privacy() {
   return (
     <section className="privacy" id="privacy">
       <Reveal>
-        <div className="privacy__panel">
+        <div className="privacy__inner">
           <div className="privacy__head">
             <Line>PRIVACY, FIRST</Line>
-            <LogoMark size={34} />
+            <LogoMark size={38} />
           </div>
           <h2 className="privacy__title">Your data never leaves your machine.</h2>
           <p className="privacy__body">
@@ -457,44 +491,41 @@ function Privacy() {
   );
 }
 
-function OpenSource() {
+function Finale() {
   return (
-    <section className="section section--oss" id="open-source">
-      <Reveal>
-        <Line>OPEN SOURCE</Line>
-        <h2 className="section__title">Read every line.</h2>
-        <p className="section__lead">
-          Trust is earned in the source. Veya is a single repo — the form engine, the security layer, the
-          providers, the extension. Audit it, fork it, file an issue.
-        </p>
-        <div className="oss__cta">
-          <a className="btn btn--ghost mono" href="https://github.com/Jasowills/veya" rel="noreferrer">
-            github.com/Jasowills/veya <ArrowIcon />
-          </a>
+    <section className="finale" id="install">
+      <div className="finale__inner">
+        <div className="finale__col">
+          <Reveal>
+            <Line>OPEN SOURCE</Line>
+            <h2 className="finale__title">Read every line.</h2>
+            <p className="finale__lead">
+              Trust is earned in the source. Veya is a single repo — the form engine, the security layer, the
+              providers, the extension. Audit it, fork it, file an issue.
+            </p>
+            <div className="finale__cta">
+              <a className="btn btn--ghost mono" href="https://github.com/Jasowills/veya" rel="noreferrer">
+                github.com/Jasowills/veya <ArrowIcon />
+              </a>
+            </div>
+          </Reveal>
         </div>
-      </Reveal>
-    </section>
-  );
-}
-
-function Install() {
-  return (
-    <section className="install" id="install">
-      <div className="install__inner">
-        <Reveal>
-          <Line center>GET STARTED</Line>
-          <h2 className="install__title">
-            One profile.
-            <br />
-            Every application.
-          </h2>
-          <div className="install__cta">
-            <a className="btn btn--solid btn--lg" href="https://github.com/Jasowills/veya/releases">
-              Install for Chrome
-            </a>
-            <span className="install__hint mono">→ loads as an unpacked extension · 30 seconds</span>
-          </div>
-        </Reveal>
+        <div className="finale__col">
+          <Reveal delay={90}>
+            <Line>GET STARTED</Line>
+            <h2 className="finale__title">
+              One profile.
+              <br />
+              Every application.
+            </h2>
+            <div className="finale__cta">
+              <a className="btn btn--solid btn--lg" href="https://github.com/Jasowills/veya/releases">
+                Install for Chrome
+              </a>
+              <span className="finale__hint mono">→ loads as an unpacked extension · 30 seconds</span>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -504,7 +535,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner">
-        <Wordmark size={18} />
+        <Wordmark size={19} />
         <p className="footer__tag mono">your career, already understood</p>
         <div className="footer__links mono">
           <a href="https://github.com/Jasowills/veya">github</a>
@@ -528,8 +559,7 @@ export function App() {
         <HowItWorks />
         <Features />
         <Privacy />
-        <OpenSource />
-        <Install />
+        <Finale />
       </main>
       <Footer />
     </>
