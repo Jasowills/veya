@@ -337,6 +337,9 @@ function Hero() {
           </Reveal>
           <Reveal delay={320}>
             <p className="hero__note mono">no account · no cloud · bring your own model</p>
+            <p className="hero__note hero__note--models mono">
+              models: llama · qwen · gemma · claude · gpt · gemini — local, or your own key
+            </p>
           </Reveal>
         </div>
 
@@ -421,7 +424,7 @@ function HowItWorks() {
 function Features() {
   const features = [
     { icon: <ScanIcon />, name: "Form intelligence", body: "A deterministic engine classifies fields — name, work authorization, LinkedIn, availability — from messy, framework-built DOM." },
-    { icon: <NodesIcon />, name: "Model-agnostic AI", body: "Ollama on your machine, or your own key for OpenAI, Anthropic, Gemini, Groq, OpenRouter. Nothing routed through Veya." },
+    { icon: <NodesIcon />, name: "Model-agnostic AI", body: "Llama, Qwen, Gemma on your machine via Ollama — or your own key for GPT, Claude, Gemini, Groq, OpenRouter. Nothing routed through Veya." },
     { icon: <DocIcon />, name: "Document engine", body: "Parse a résumé PDF to seed your profile. Generate a tailored cover letter and export it as a clean PDF." },
     { icon: <ReviewIcon />, name: "Review-first by design", body: "Every answer is sourced — verified, preference, saved answer, or draft. You approve before anything is submitted." },
     { icon: <TransferIcon />, name: "Import & export", body: "Your profile is a plain file. Take it with you, version it, restore it. Portable by construction." },

@@ -355,6 +355,12 @@ section[id] {
   color: var(--ink-3);
 }
 
+.hero__note--models {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
 .hero__video {
   position: relative;
   padding-top: 10px;
