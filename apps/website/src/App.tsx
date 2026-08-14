@@ -287,18 +287,55 @@ function Nav() {
   );
 }
 
-/* Demo slot — wire the produced video in here (see the demo-video skill). */
+/* Demo slot — the produced career-service film (see /vey a-demo). */
 function DemoSlot() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    v.addEventListener("play", onPlay);
+    v.addEventListener("pause", onPause);
+    return () => {
+      v.removeEventListener("play", onPlay);
+      v.removeEventListener("pause", onPause);
+    };
+  }, []);
+
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) void v.play();
+    else v.pause();
+  };
+
   return (
-    <div className="demo">
-      <div className="demo__screen" role="img" aria-label="Veya product demo — video coming soon">
-        <button className="demo__play" type="button" aria-label="Watch the demo" disabled>
+    <div className="demo" data-playing={playing}>
+      <div className="demo__screen" role="group" aria-label="Veya product demo film">
+        <video
+          ref={ref}
+          className="demo__video"
+          src="/demo/veya-demo.mp4"
+          poster="/demo/veya-demo-poster.jpg"
+          preload="metadata"
+          playsInline
+          onClick={toggle}
+        />
+        <button
+          className="demo__play"
+          type="button"
+          aria-label={playing ? "Pause the demo" : "Watch the demo"}
+          onClick={toggle}
+        >
           <PlayIcon />
         </button>
         <span className="demo__plate mono">
-          WATCH THE DEMO <ArrowIcon />
+          {playing ? "VEYA · CAREER SERVICE" : "WATCH THE DEMO"} <ArrowIcon />
         </span>
-        <span className="demo__tag mono">01:42</span>
+        <span className="demo__tag mono">0:25</span>
       </div>
     </div>
   );

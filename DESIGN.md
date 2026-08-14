@@ -188,7 +188,7 @@ The station floor — the hero's thesis, full width below the copy. A live depar
 - **Responsive:** on ≤640px the row grid becomes `44px 1fr 32px` with the field stacked over the value and the column head hidden.
 
 ### Demo Video Slot
-The hero's second column: a 16:9 framed window (raised paper, grid texture) holding a sharp-cornered 68px ink play button, a `WATCH THE DEMO` mono plate, and a `01:42` tag. The button is disabled until the produced demo video is wired in; the slot is the affordance, not the content.
+The hero's second column: a 16:9 framed window (raised paper, grid texture) holding a sharp-cornered 68px ink play button, a `WATCH THE DEMO` mono plate, and a `0:25` tag. Now wired to the produced film (`/demo/veya-demo.mp4`): the film is the monochrome career-service world — hook card, a browser + docked Veya side panel, a scan sweep, a camera push tight into the AI-draft moment, a pull-back to a verified form with an "all departures on time" stamp, and an end card. Play toggles the video; the button and plate fade while playing, and the slot is the affordance that becomes the content.
 
 ### Navigation
 - Sticky masthead, paper at 88% + backdrop blur, hairline underline. Links are IBM Plex Mono 13px uppercase with a 1px ink underline that scales in from the left on hover. Links hide at ≤720px, leaving the wordmark and CTA.

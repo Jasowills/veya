@@ -110,6 +110,7 @@ Phase 7 — Browser extension foundation COMPLETE (builds, loads in Chromium, e2
 - CLI distribution: `cd apps/cli && pnpm add --global .` → `veya` on PATH, `veya doctor` all-green (node, profile, extension build, ollama) → OK.
 - Packaging: `pnpm package` → `release/veya-extension.zip` (manifest.json at root + icons + background/content/ui) → OK.
 - Website: headless verification — 0 console errors, no horizontal overflow at 375/768/1440px, fonts loaded, departure-board rows/statuses/scan present, all sections present, body contrast 15.85:1, finish-review (fresh-context subagent) PASS → OK.
+- Demo film: Remotion (1920×1080, 30fps, 0:25) in the monochrome career-service world — hook, browser + side-panel, scan sweep, camera push tight into the AI-draft moment, pull-back to a verified form ("all departures on time"), end card. Rendered `apps/website/public/demo/veya-demo.mp4` + poster; hero demo slot wired to play it (verified: video loads/plays, no overflow at 375–1920px, no console errors). Numbers stay consistent with the board (8 fields · 5 verified · 1 drafted · 2 for you).
 - GitHub Actions CI: `typecheck · build · test` + `extension headless smoke` both green on main.
 
 ## Next Steps
