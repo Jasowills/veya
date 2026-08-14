@@ -2,17 +2,17 @@
 name: Veya
 description: A privacy-first AI career assistant. The job application as a scheduled journey.
 colors:
-  paper: "#f1eee6"
-  paper-raised: "#e9e5d8"
-  paper-deep: "#ded9c7"
-  ink: "#17140e"
-  ink-secondary: "#575146"
-  ink-tertiary: "#6e6858"
-  on-ink: "#f1eee6"
-  on-ink-muted: "rgba(241, 238, 230, 0.72)"
-  rule: "rgba(23, 20, 14, 0.14)"
-  rule-strong: "rgba(23, 20, 14, 0.32)"
-  on-ink-rule: "rgba(241, 238, 230, 0.2)"
+  paper: "#17140e"
+  paper-raised: "#1f1a11"
+  paper-deep: "#2a2418"
+  ink: "#f1eee6"
+  ink-secondary: "#a49c87"
+  ink-tertiary: "#8a8170"
+  on-ink: "#17140e"
+  on-ink-muted: "rgba(23, 20, 14, 0.72)"
+  rule: "rgba(241, 238, 230, 0.12)"
+  rule-strong: "rgba(241, 238, 230, 0.28)"
+  on-ink-rule: "rgba(23, 20, 14, 0.2)"
 typography:
   display:
     fontFamily: "Archivo, Instrument Sans, sans-serif"
@@ -90,39 +90,39 @@ components:
 
 **Creative North Star: "The Career Timetable"**
 
-Veya presents the job application as a scheduled journey — a warm-paper Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome: warm paper and warm ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine.
+Veya presents the job application as a scheduled journey — a warm-ink Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome and inverted: warm black paper and warm bone ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine.
 
-Density is calm and editorial: large grotesque display with a serif-italic counterpoint, tabular mono data set in ruled grids, and generous paper. Depth comes from tonal layering and a single soft shadow under the hero board, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.
+Density is calm and editorial: large grotesque display with a serif-italic counterpoint, tabular mono data set in ruled grids, and generous black. Depth comes from tonal layering and a single soft shadow under the hero board, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.
 
 **Key Characteristics:**
-- Warm monochrome only — paper and ink ramps, never gray, never hue.
+- Warm monochrome only, dark-first — inverted paper and ink ramps, never gray, never hue.
 - Hairline rules (1px) define structure; borders are lines, not boxes.
 - One display voice (Archivo) with an Instrument Serif italic counterpoint for the emotive phrase.
 - Tabular IBM Plex Mono reserved for data, times, labels, and line designations.
 - Sharp corners (2–3px); no pill shapes, no soft rounded rectangles.
 - One authored motion moment: the live departure board.
-- Expansive, premium presence: 1400px measure, full-bleed bands, one demo-video slot in the hero.
+- Expansive, premium presence: 1400px measure, full-bleed bands, one live product-demo slot in the hero.
 
 ## Colors
 
-A warm paper-and-ink monochrome: every neutral is a warm-brown derivative, never a pure gray. There is no accent color; hierarchy is expressed entirely through ink weight, fill, and rule strength.
+A warm, inverted monochrome: the page is near-black warm paper with bone ink text; the two gravity bands (privacy, closing) flip to light paper with dark ink. Every neutral is a warm-brown derivative, never a pure gray. There is no accent color; hierarchy is expressed entirely through ink weight, fill, and rule strength. `color-scheme: dark`.
 
 ### Neutral
-- **Paper** (#f1eee6): page background and canvas.
-- **Raised Paper** (#e9e5d8): surfaces, boards, strips — one step off the page.
-- **Deep Paper** (#ded9c7): board headers, footers, raised chrome.
-- **Ink** (#17140e): text, primary buttons, the inverted privacy panel, the station ticker. Also the effective accent — the logo mark renders in ink on paper and paper on ink.
-- **Secondary Ink** (#575146): body secondary text, small labels (≥4.5:1 on all paper surfaces; 5.56:1 on deep paper).
-- **Tertiary Ink** (#6e6858): quiet annotations — hero note, stop numbers, footer legal (4.79:1 on paper; never used on raised or deep paper).
-- **On-Ink** (#f1eee6): text on the ink panel (15.85:1 inverted).
-- **On-Ink Muted** (rgba(241,238,230,0.72)): secondary text on the ink panel (8.58:1 blended).
-- **Rule** (rgba(23,20,14,0.14)) / **Strong Rule** (rgba(23,20,14,0.32)): hairlines and borders; on-ink variant rgba(241,238,230,0.2).
+- **Paper** (#17140e): page background and canvas (inverted from the original #f1eee6).
+- **Raised Paper** (#1f1a11): surfaces, boards, strips — one step off the page.
+- **Deep Paper** (#2a2418): board headers, footers, raised chrome.
+- **Ink** (#f1eee6): text, primary buttons, the light privacy panel, the station ticker. Also the effective accent — the logo mark renders in ink on paper and paper on ink.
+- **Secondary Ink** (#a49c87): body secondary text, small labels (≥4.5:1 on all paper surfaces; 5.63:1 on deep paper).
+- **Tertiary Ink** (#8a8170): quiet annotations — hero note, stop numbers, footer legal (4.77:1 on paper; never used on raised or deep paper).
+- **On-Ink** (#17140e): text on the light ink panel (15.85:1 inverted).
+- **On-Ink Muted** (rgba(23,20,14,0.72)): secondary text on the light panel (8.58:1 blended).
+- **Rule** (rgba(241,238,230,0.12)) / **Strong Rule** (rgba(241,238,230,0.28)): hairlines and borders; on-ink variant rgba(23,20,14,0.2).
 
 ### Named Rules
 
 **The Monochrome Rule.** Warm paper and ink only. Any departure from the ramp (a hue, a glow, a pure gray) is a defect, not an accent. Status is communicated by fill vs. outline (solid = verified, dashed = draft), never by color.
 
-**The Inverted Moment Rule.** The ink panel is used exactly once, for privacy — the page's single moment of gravity. Everything else lives on paper.
+**The Inverted Moment Rule.** The light ink panel is used exactly twice, for privacy and the closing band — the page's moments of gravity. Everything else lives on the dark page.
 
 ## Typography
 
@@ -151,7 +151,7 @@ A warm paper-and-ink monochrome: every neutral is a warm-brown derivative, never
 
 An expansive 1400px page measure, centered, with `max(32px, (100vw - 1400px) / 2)` gutters everywhere. Sections breathe: clamp(84px, 10vw, 140px) of vertical padding per section, hairline rules between major sections. Anchored sections get `scroll-margin-top: 96px` for the sticky nav.
 
-- **Hero:** headline copy left + demo-video slot right (grid 1.1fr / 0.9fr), then the full-width departure board below as the station floor — the board is an instrument, not a sidebar widget. Stacks to one column at ≤900px.
+- **Hero:** headline copy left + live product-demo slot right (grid 1.1fr / 0.9fr), then the full-width departure board below as the station floor — the board is an instrument, not a sidebar widget. Stacks to one column at ≤900px.
 - **Trust strip:** four guarantee entries divided by vertical hairlines; two columns at ≤800px, one at ≤420px.
 - **Route (how it works):** three stops along a horizontal hairline track; collapses to a vertical track at ≤860px.
 - **Features ledger:** a strict 2-column ruled grid (border-top/left on the container, border-bottom/right on each cell); single column at ≤760px.

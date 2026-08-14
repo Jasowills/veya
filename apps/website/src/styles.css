@@ -6,17 +6,17 @@
    =================================================================== */
 
 :root {
-  --paper: #f1eee6;
-  --paper-2: #e9e5d8;
-  --paper-3: #ded9c7;
-  --ink: #17140e;
-  --ink-2: #575146;
-  --ink-3: #6e6858;
-  --rule: rgba(23, 20, 14, 0.14);
-  --rule-strong: rgba(23, 20, 14, 0.32);
-  --on-ink: #f1eee6;
-  --on-ink-2: rgba(241, 238, 230, 0.72);
-  --on-ink-rule: rgba(241, 238, 230, 0.2);
+  --paper: #17140e;
+  --paper-2: #1f1a11;
+  --paper-3: #2a2418;
+  --ink: #f1eee6;
+  --ink-2: #a49c87;
+  --ink-3: #8a8170;
+  --rule: rgba(241, 238, 230, 0.12);
+  --rule-strong: rgba(241, 238, 230, 0.28);
+  --on-ink: #17140e;
+  --on-ink-2: rgba(23, 20, 14, 0.72);
+  --on-ink-rule: rgba(23, 20, 14, 0.2);
 
   --page-max: 1400px;
   --gutter: max(32px, calc((100vw - var(--page-max)) / 2));
@@ -38,7 +38,7 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
@@ -147,7 +147,7 @@ section[id] {
 }
 
 .btn--solid:hover {
-  background: #2a261c;
+  background: #f7f4ec;
   transform: translateY(-1px);
 }
 
@@ -376,7 +376,7 @@ section[id] {
 .demo {
   border: 1px solid var(--rule-strong);
   background: var(--paper-2);
-  box-shadow: 0 1px 0 rgba(23, 20, 14, 0.06), 0 24px 60px -28px rgba(23, 20, 14, 0.35);
+  box-shadow: 0 1px 0 rgba(241, 238, 230, 0.06), 0 24px 60px -28px rgba(0, 0, 0, 0.65);
   overflow: hidden;
 }
 
@@ -391,15 +391,15 @@ section[id] {
       to right,
       transparent 0,
       transparent 55px,
-      rgba(23, 20, 14, 0.05) 55px,
-      rgba(23, 20, 14, 0.05) 56px
+      rgba(241, 238, 230, 0.05) 55px,
+      rgba(241, 238, 230, 0.05) 56px
     ),
     repeating-linear-gradient(
       to bottom,
       transparent 0,
       transparent 31px,
-      rgba(23, 20, 14, 0.04) 31px,
-      rgba(23, 20, 14, 0.04) 32px
+      rgba(241, 238, 230, 0.04) 31px,
+      rgba(241, 238, 230, 0.04) 32px
     );
 }
 
@@ -612,7 +612,7 @@ section[id] {
   right: 4cqw;
   height: 1px;
   background: linear-gradient(to right, transparent, var(--ink) 18%, var(--ink) 82%, transparent);
-  box-shadow: 0 0 6cqw 2.5cqw rgba(23, 20, 14, 0.05);
+  box-shadow: 0 0 6cqw 2.5cqw rgba(241, 238, 230, 0.06);
   opacity: 0;
   animation: pd-beam 18s ease-in-out infinite;
 }
@@ -978,7 +978,7 @@ section[id] {
   position: relative;
   border: 1px solid var(--rule-strong);
   background: var(--paper-2);
-  box-shadow: 0 1px 0 rgba(23, 20, 14, 0.06), 0 24px 60px -28px rgba(23, 20, 14, 0.35);
+  box-shadow: 0 1px 0 rgba(241, 238, 230, 0.06), 0 24px 60px -28px rgba(0, 0, 0, 0.65);
   overflow: hidden;
 }
 
@@ -990,8 +990,8 @@ section[id] {
     to right,
     transparent 0,
     transparent 55px,
-    rgba(23, 20, 14, 0.05) 55px,
-    rgba(23, 20, 14, 0.05) 56px
+    rgba(241, 238, 230, 0.05) 55px,
+    rgba(241, 238, 230, 0.05) 56px
   );
   pointer-events: none;
 }
@@ -1590,8 +1590,8 @@ section[id] {
     to bottom,
     transparent 0,
     transparent 51px,
-    rgba(241, 238, 230, 0.045) 51px,
-    rgba(241, 238, 230, 0.045) 52px
+    rgba(23, 20, 14, 0.05) 51px,
+    rgba(23, 20, 14, 0.05) 52px
   );
   pointer-events: none;
 }

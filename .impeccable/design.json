@@ -4,14 +4,14 @@
   "title": "Design System: Veya — The Career Timetable",
   "extensions": {
     "colorMeta": {
-      "paper": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#f1eee6", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
-      "paper-raised": { "role": "neutral", "displayName": "Raised Paper", "canonical": "#e9e5d8", "tonalRamp": ["#575146", "#6e6858", "#8a8371", "#a39c89", "#b9b29e", "#cbc5b3", "#d9d4c5", "#e9e5d8"] },
-      "paper-deep": { "role": "neutral", "displayName": "Deep Paper", "canonical": "#ded9c7", "tonalRamp": ["#4c473d", "#635e50", "#7d7766", "#948d7a", "#a9a28e", "#bdb6a2", "#cdc8b5", "#ded9c7"] },
-      "ink": { "role": "neutral", "displayName": "Warm Ink", "canonical": "#17140e", "tonalRamp": ["#17140e", "#2a261c", "#3b372b", "#4c473d", "#635e50", "#7d7766", "#a39c89", "#e9e5d8"] },
-      "ink-secondary": { "role": "neutral", "displayName": "Secondary Ink", "canonical": "#575146", "tonalRamp": ["#575146", "#6e6858", "#8a8371", "#a39c89", "#b9b29e", "#cbc5b3", "#d9d4c5", "#e9e5d8"] },
-      "ink-tertiary": { "role": "neutral", "displayName": "Tertiary Ink", "canonical": "#6e6858", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
-      "on-ink": { "role": "neutral", "displayName": "Paper on Ink", "canonical": "#f1eee6", "tonalRamp": ["#6e6858", "#8a8371", "#9a9380", "#b0a992", "#c4bda7", "#d8d2bf", "#e9e5d8", "#f1eee6"] },
-      "on-ink-muted": { "role": "neutral", "displayName": "Muted On-Ink", "canonical": "rgba(241, 238, 230, 0.72)", "tonalRamp": [] }
+      "paper": { "role": "neutral", "displayName": "Warm Paper (inverted — dark page)", "canonical": "#17140e", "tonalRamp": ["#17140e", "#2a2418", "#3b3425", "#4c4434", "#5d5442", "#6f6652", "#a49c87", "#f1eee6"] },
+      "paper-raised": { "role": "neutral", "displayName": "Raised Paper", "canonical": "#1f1a11", "tonalRamp": ["#17140e", "#201b12", "#292417", "#332d1f", "#3f3828", "#4c4434", "#5d5442", "#6f6652"] },
+      "paper-deep": { "role": "neutral", "displayName": "Deep Paper", "canonical": "#2a2418", "tonalRamp": ["#17140e", "#201b12", "#292417", "#332d1f", "#3f3828", "#4c4434", "#5d5442", "#6f6652"] },
+      "ink": { "role": "neutral", "displayName": "Warm Ink (bone text)", "canonical": "#f1eee6", "tonalRamp": ["#f1eee6", "#d9d4c5", "#c4bda7", "#a49c87", "#8a8170", "#6f6652", "#4c4434", "#2a2418"] },
+      "ink-secondary": { "role": "neutral", "displayName": "Secondary Ink", "canonical": "#a49c87", "tonalRamp": ["#f1eee6", "#d9d4c5", "#c4bda7", "#a49c87", "#8a8170", "#6f6652", "#4c4434", "#2a2418"] },
+      "ink-tertiary": { "role": "neutral", "displayName": "Tertiary Ink", "canonical": "#8a8170", "tonalRamp": ["#f1eee6", "#d9d4c5", "#c4bda7", "#a49c87", "#8a8170", "#6f6652", "#4c4434", "#2a2418"] },
+      "on-ink": { "role": "neutral", "displayName": "Ink on Paper (dark on light fills)", "canonical": "#17140e", "tonalRamp": ["#17140e", "#2a2418", "#3b3425", "#4c4434", "#5d5442", "#6f6652", "#a49c87", "#f1eee6"] },
+      "on-ink-muted": { "role": "neutral", "displayName": "Muted On-Ink", "canonical": "rgba(23, 20, 14, 0.72)", "tonalRamp": [] }
     },
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "Hero statement only, Archivo 800." },
@@ -90,7 +90,7 @@
   ],
   "narrative": {
     "northStar": "The Career Timetable",
-    "overview": "Veya presents the job application as a scheduled journey — a warm-paper Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome: warm paper and warm ink, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine. The layout is expansive and premium: a 1400px measure, a full-width departure board as the station floor beneath a headline + demo-video-slot hero, a full-bleed inverted ink privacy band, and a full-bleed deep-paper closing band that merges open source and install. Depth comes from tonal layering and a single soft shadow under the hero instruments, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still.",
+    "overview": "Veya presents the job application as a scheduled journey — a warm-ink Swiss departure board where every field is a service leaving the station on time, verified and on its way. The system is strictly monochrome and dark-first (inverted): a warm near-black page with bone ink text, hairline rules, tabular data. It is the visual language of trust through precision: nothing glows, nothing shouts, everything is on time and nothing leaves the machine. The layout is expansive and premium: a 1400px measure, a full-width departure board as the station floor beneath a headline + live product-demo hero (an 18s CSS loop of the extension in work, no video), a full-bleed light privacy band, and a full-bleed light closing band that merges open source and install. Depth comes from tonal layering and a single soft shadow under the hero instruments, never from neon or glow. Motion is one authored moment — the live departure board ticking — with everything else still. prefers-reduced-motion halts the board and settles the demo; color-scheme is dark.",
     "keyCharacteristics": [
       "Warm monochrome only — paper and ink ramps, never gray, never hue.",
       "Hairline rules (1px) define structure; borders are lines, not boxes.",
@@ -98,7 +98,7 @@
       "Tabular IBM Plex Mono reserved for data, times, labels, and line designations.",
       "Sharp corners (2–3px); no pill shapes, no soft rounded rectangles.",
       "One authored motion moment: the live departure board.",
-      "Expansive, premium presence: 1400px measure, full-bleed bands, one demo-video slot in the hero."
+      "Expansive, premium presence: 1400px measure, full-bleed bands, one live product-demo slot in the hero."
     ],
     "rules": [
       { "name": "The Monochrome Rule", "body": "Warm paper and ink only. Any departure from the ramp (a hue, a glow, a pure gray) is a defect, not an accent. Status is communicated by fill vs. outline (solid = verified, dashed = draft), never by color.", "section": "colors" },
