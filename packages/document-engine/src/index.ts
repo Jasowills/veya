@@ -21,3 +21,8 @@ export {
   composeTextPdf,
   type PdfComposeOptions,
 } from "./pdf.js";
+export {
+  parseDates,
+  resumeToProfile,
+  experienceToProfileEntry,
+} from "./resume-to-profile.js";

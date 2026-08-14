@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ParsedResume } from "@veya/document-engine";
 import { emptyProfile, type CareerProfile } from "@veya/profile";
-import { parseDates, resumeToProfile } from "../src/resume-mapper.js";
+import { parseDates, resumeToProfile } from "@veya/document-engine";
 import { profileExport, profileImport, profileInit, profileShow } from "../src/profile-cmd.js";
 import { printChecks } from "../src/doctor.js";
 

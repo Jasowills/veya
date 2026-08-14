@@ -14,12 +14,14 @@
   "dependencies": {
     "@veya/ai": "workspace:*",
     "@veya/core": "workspace:*",
+    "@veya/document-engine": "workspace:*",
     "@veya/form-engine": "workspace:*",
     "@veya/profile": "workspace:*",
     "@veya/prompts": "workspace:*",
     "@veya/providers": "workspace:*",
     "@veya/security": "workspace:*",
     "@veya/shared": "workspace:*",
+    "pdfjs-dist": "^4.2.67",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

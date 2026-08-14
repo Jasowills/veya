@@ -1,10 +1,13 @@
 /**
  * Map a parsed resume onto a CareerProfile. Best-effort seeding — the user
- * reviews and corrects in the editor. Nothing here is treated as verified.
+ * reviews and corrects before the profile is considered verified. Nothing here
+ * is treated as fact.
+ *
+ * Runs in both Node (CLI) and the browser (extension side panel), so it uses
+ * the global `crypto.randomUUID()` rather than `node:crypto`.
  */
 
-import { randomUUID } from "node:crypto";
-import type { ParsedResume, ResumeExperienceBlock } from "@veya/document-engine";
+import type { ParsedResume, ResumeExperienceBlock } from "./resume-parser.js";
 import { emptyProfile, type CareerProfile, type Education } from "@veya/profile";
 
 const MONTHS: Record<string, number> = {
@@ -41,7 +44,7 @@ export function parseDates(dates: string | undefined): { start?: string; end?: s
 }
 
 function educationFromLine(line: string): Education {
-  const id = randomUUID();
+  const id = crypto.randomUUID();
   const years = line.match(/\((\d{4})\s*[-–]\s*(\d{4})\)/);
   const rest = line.replace(/\(.*\)$/, "").trim();
   const parts = rest.split(/[|,]\s*| – /);
@@ -61,7 +64,7 @@ function educationFromLine(line: string): Education {
 export function experienceToProfileEntry(e: ResumeExperienceBlock): CareerProfile["experience"][number] {
   const { start, end, current } = parseDates(e.dates);
   return {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     company: e.company ?? "Unknown company",
     title: e.title ?? "Position",
     start,

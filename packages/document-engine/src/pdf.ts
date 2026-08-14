@@ -4,7 +4,7 @@
  * Uses pdf-lib (pure JS, no native deps). Text is greedy-wrapped and paginated.
  */
 
-import { PDFDocument, StandardFonts, type PDFPage } from "pdf-lib";
+import type { PDFPage } from "pdf-lib";
 
 export interface PdfComposeOptions {
   /** Bold heading drawn at the top of the first page. */
@@ -21,6 +21,7 @@ export interface PdfComposeOptions {
 const US_LETTER = { width: 612, height: 792 };
 
 export async function composeTextPdf(text: string, opts: PdfComposeOptions = {}): Promise<Uint8Array> {
+  const { PDFDocument, StandardFonts } = await import("pdf-lib");
   const doc = await PDFDocument.create();
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);

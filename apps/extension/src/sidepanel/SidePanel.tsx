@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { brand, Wordmark } from "@veya/shared";
+import type { CareerProfile } from "@veya/profile";
 import type { GenerateOutcome, PlanEntry, Request, Response, ScanState } from "../shared/messages.js";
-import { Button, Card, EmptyState, Pill, type StatusTone } from "../ui/components.js";
+import { Button, Card, EmptyState, Pill, Spinner, type StatusTone } from "../ui/components.js";
+import { isProfileSet } from "./resume.js";
+import { SetupWizard } from "./setup-wizard.js";
 
 type Status = { provider: string; model?: string; healthy: boolean } | null;
 
@@ -53,9 +56,17 @@ export function SidePanel() {
   const [error, setError] = useState<string | null>(null);
   const [fillResult, setFillResult] = useState<{ ok: number; failed: number } | null>(null);
   const [drafting, setDrafting] = useState<string | null>(null);
+  const [profileReady, setProfileReady] = useState(false);
+  const [profileSet, setProfileSet] = useState(false);
 
   useEffect(() => {
     void send<Status>({ kind: "status" }).then(setStatus).catch(() => setStatus(null));
+    void send<CareerProfile>({ kind: "getProfile" })
+      .then((p) => {
+        setProfileSet(isProfileSet(p));
+        setProfileReady(true);
+      })
+      .catch(() => setProfileReady(true));
   }, []);
 
   const analyze = useCallback(async () => {
@@ -160,12 +171,22 @@ export function SidePanel() {
       {error ? <div className="sp-error">{error}</div> : null}
 
       {!scan ? (
-        <Card>
-          <EmptyState
-            title="No application analyzed yet"
-            detail="Open a job application page, then analyze it. Veya reads the form locally — nothing leaves your device unless you choose a cloud model."
-          />
-        </Card>
+        profileReady ? (
+          profileSet ? (
+            <Card>
+              <EmptyState
+                title="No application analyzed yet"
+                detail="Open a job application page, then analyze it. Veya reads the form locally — nothing leaves your device unless you choose a cloud model."
+              />
+            </Card>
+          ) : (
+            <SetupWizard onDone={() => setProfileSet(true)} onSkip={() => setProfileSet(true)} />
+          )
+        ) : (
+          <div className="sp-loading">
+            <Spinner size={20} />
+          </div>
+        )
       ) : (
         <>
           <div className="sp-page">

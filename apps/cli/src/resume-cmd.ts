@@ -3,8 +3,7 @@
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { parseResumePdf } from "@veya/document-engine";
-import { resumeToProfile } from "./resume-mapper.js";
+import { parseResumePdf, resumeToProfile } from "@veya/document-engine";
 
 export async function resumeParse(file: string, out?: string): Promise<void> {
   const bytes = readFileSync(file);
