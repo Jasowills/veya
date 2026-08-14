@@ -16,6 +16,10 @@ export const workspaceAlias = {
 
 export const common = {
   resolve: { alias: workspaceAlias },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+    "process.env": "{}",
+  },
   build: {
     outDir: "dist",
   },

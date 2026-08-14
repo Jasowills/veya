@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
-import { dir, workspaceAlias } from "./vite.config.shared.js";
+import { dir, common } from "./vite.config.shared.js";
 
 export default defineConfig({
-  resolve: { alias: workspaceAlias },
+  ...common,
   build: {
     outDir: "dist",
     emptyOutDir: false,
