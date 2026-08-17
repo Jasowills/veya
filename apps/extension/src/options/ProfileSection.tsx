@@ -139,6 +139,9 @@ export function ProfileSection({ profile, onChange, onSave, onNotice }: Props) {
               {[p.contact?.city, p.contact?.state, p.contact?.country].filter(Boolean).join(", ")}
             </div>
           ) : null}
+          {p.contact?.linkedinUrl ? <div className="pe-summary-detail">{p.contact.linkedinUrl}</div> : null}
+          {p.contact?.githubUrl ? <div className="pe-summary-detail">{p.contact.githubUrl}</div> : null}
+          {p.contact?.websiteUrl ? <div className="pe-summary-detail">{p.contact.websiteUrl}</div> : null}
         </Card>
       ) : null}
 

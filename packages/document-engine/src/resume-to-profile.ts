@@ -88,16 +88,25 @@ export function experienceToProfileEntry(e: ResumeExperienceBlock): CareerProfil
 
 export function resumeToProfile(resume: ParsedResume): CareerProfile {
   const profile = emptyProfile();
-  const preamble = resume.sections.find((s) => s.heading === "preamble")?.lines ?? [];
-  const nameLine = preamble.find((l) => !/@/.test(l) && !/linkedin|github/i.test(l) && /\w/.test(l));
-  if (nameLine) {
-    const { firstName, lastName } = splitName(nameLine);
+
+  // Name: prefer parser-detected name, fall back to preamble heuristic
+  if (resume.contact.name) {
+    const { firstName, lastName } = splitName(resume.contact.name);
     profile.identity = { firstName, lastName };
+  } else {
+    const preamble = resume.sections.find((s) => s.heading === "preamble")?.lines ?? [];
+    const nameLine = preamble.find((l) => !/@/.test(l) && !/linkedin|github/i.test(l) && /\w/.test(l));
+    if (nameLine) {
+      const { firstName, lastName } = splitName(nameLine);
+      profile.identity = { firstName, lastName };
+    }
   }
+
   profile.contact = {
     email: resume.contact.email ?? "",
     phone: resume.contact.phone,
     linkedinUrl: resume.contact.linkedin,
+    githubUrl: resume.contact.github,
     websiteUrl: resume.contact.website,
     city: resume.contact.location,
   };

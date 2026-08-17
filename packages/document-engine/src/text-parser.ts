@@ -7,10 +7,12 @@
  */
 
 export interface ResumeContact {
+  name?: string;
   email?: string;
   phone?: string;
   location?: string;
   linkedin?: string;
+  github?: string;
   website?: string;
 }
 
@@ -39,6 +41,7 @@ export interface ParsedResume {
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/;
 const PHONE_RE = /(?:\+?\d[\d\s().-]{7,}\d)/;
 const LINKEDIN_RE = /linkedin\.com\/[\w/\-]+/i;
+const GITHUB_RE = /github\.com\/[\w/\-]+/i;
 const WEBSITE_RE = /(?<![\w@])(?:https?:\/\/)?(?:www\.)?[\w-]+\.(?:com|io|dev|org|net|me|co|app)(?:\/[^\s]*)?/i;
 const PAGE_FOOTER_RE = /^\s*(?:[-–—./]{2,}|\d+\s*(?:of|\/)\s*\d+|page\s+\d+)/i;
 
@@ -85,16 +88,39 @@ function headingOf(line: string): string | undefined {
 function detectContact(lines: string[]): ResumeContact {
   const contact: ResumeContact = {};
   const joined = lines.join("\n");
+
+  // Name: first line that doesn't contain @, linkedin, github, or look like a section
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t) continue;
+    if (/@/.test(t)) continue;
+    if (/linkedin|github/i.test(t)) continue;
+    if (t.length > 60) continue;
+    if (/^\d/.test(t)) continue;
+    // Looks like a name: 2-4 words, each capitalized, no special chars
+    if (/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}$/.test(t)) {
+      contact.name = t;
+      break;
+    }
+  }
+
   const email = joined.match(EMAIL_RE);
   if (email) contact.email = email[0];
   const phone = joined.match(PHONE_RE);
   if (phone) contact.phone = phone[0].replace(/[^+\d]/g, "");
   const linkedin = joined.match(LINKEDIN_RE);
   if (linkedin) contact.linkedin = linkedin[0];
+  const github = joined.match(GITHUB_RE);
+  if (github) contact.github = github[0];
   const website = joined.match(WEBSITE_RE);
   if (website) {
     const value = website[0];
-    if (!linkedin || !value.toLowerCase().includes("linkedin")) contact.website = value;
+    if (!linkedin || !value.toLowerCase().includes("linkedin")) {
+      // Don't overwrite github with generic website
+      if (!github || !value.toLowerCase().includes("github")) {
+        contact.website = value;
+      }
+    }
   }
   return contact;
 }
