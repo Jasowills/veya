@@ -36,6 +36,7 @@ export function Options() {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
+  const [wasConfigured, setWasConfigured] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const resumeRef = useRef<HTMLInputElement>(null);
   const [resumeBusy, setResumeBusy] = useState(false);
@@ -45,6 +46,7 @@ export function Options() {
       const stored = await chrome.storage.local.get("veya.config.v1");
       const c = (stored["veya.config.v1"] as RuntimeConfig) ?? { provider: "ollama", model: "" };
       setConfig({ ...c });
+      setWasConfigured(!!stored["veya.config.v1"]);
       setLoading(false);
       void refreshStatus();
       void loadProfile();
@@ -73,6 +75,7 @@ export function Options() {
     setSaved(false);
     await chrome.storage.local.set({ "veya.config.v1": config });
     setSaved(true);
+    setWasConfigured(true);
     await refreshStatus();
     setTimeout(() => setSaved(false), 1500);
   }, [config, refreshStatus]);
@@ -136,14 +139,17 @@ export function Options() {
   );
 
   const provider = PROVIDERS.find((pr) => pr.id === config.provider);
+  const isFirstTime = !wasConfigured;
 
   return (
     <div className="op-root">
       <header className="op-header">
         <Wordmark size={16} />
-        <Button variant="ghost" size="sm" onClick={save} loading={loading}>
-          {saved ? "Saved" : "Save settings"}
-        </Button>
+        {!isFirstTime ? (
+          <Button variant="ghost" size="sm" onClick={save} loading={loading}>
+            {saved ? "Saved" : "Save settings"}
+          </Button>
+        ) : null}
       </header>
 
       {notice ? <div className="op-status">{notice}</div> : null}
@@ -152,10 +158,9 @@ export function Options() {
         <div className={`op-status ${status.healthy ? "op-healthy" : "op-down"}`}>
           {status.healthy ? `Connected to ${status.provider}${status.model ? ` · ${status.model}` : ""}` : `${status.provider} is unreachable`}
         </div>
-      ) : (
-        <div className="op-status op-down">Choose a provider and save to connect.</div>
-      )}
+      ) : null}
 
+      {/* ── Provider section — always visible ─────────────────────── */}
       <section className="op-section">
         <h2 className="op-section-title">Model provider</h2>
         <div className="op-field">
@@ -190,8 +195,7 @@ export function Options() {
               onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
             />
             <p className="op-note">
-              Stored locally in your browser. Veya never transmits it anywhere except the provider's own API — and only
-              to the provider you selected.
+              Stored locally in your browser. Veya never transmits it anywhere except the provider's own API.
             </p>
           </div>
         ) : (
@@ -221,61 +225,72 @@ export function Options() {
             onChange={(e) => setConfig({ ...config, model: e.target.value })}
           />
         </div>
+
+        {isFirstTime ? (
+          <Button variant="primary" full onClick={save} loading={loading}>
+            {saved ? "Saved — go back to Veya" : "Save provider"}
+          </Button>
+        ) : null}
       </section>
 
-      <section className="op-section">
-        <div className="op-row" style={{ justifyContent: "space-between" }}>
-          <h2 className="op-section-title">Career profile</h2>
-          <div className="op-row" style={{ gap: 8 }}>
-            <Button variant="ghost" size="sm" onClick={exportProfile}>
-              Export
+      {/* ── Profile section — only after provider is saved ──────── */}
+      {wasConfigured ? (
+        <>
+          <section className="op-section">
+            <div className="op-row" style={{ justifyContent: "space-between" }}>
+              <h2 className="op-section-title">Career profile</h2>
+              <div className="op-row" style={{ gap: 8 }}>
+                <Button variant="ghost" size="sm" onClick={exportProfile}>
+                  Export
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => fileRef.current?.click()}>
+                  Import
+                </Button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="application/json"
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void importProfile(f);
+                    e.target.value = "";
+                  }}
+                />
+                <Button variant="ghost" size="sm" onClick={() => resumeRef.current?.click()} loading={resumeBusy}>
+                  {resumeBusy ? "Parsing…" : "From resume"}
+                </Button>
+                <input
+                  ref={resumeRef}
+                  type="file"
+                  accept=".pdf,.txt"
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void importResume(f);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+            </div>
+            <ProfileEditor profile={profile} onChange={setProfile} />
+            <Button variant="primary" onClick={saveProfile} disabled={!profile}>
+              Save profile
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => fileRef.current?.click()}>
-              Import
-            </Button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="application/json"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void importProfile(f);
-                e.target.value = "";
-              }}
-            />
-            <Button variant="ghost" size="sm" onClick={() => resumeRef.current?.click()} loading={resumeBusy}>
-              {resumeBusy ? "Parsing…" : "From resume"}
-            </Button>
-            <input
-              ref={resumeRef}
-              type="file"
-              accept=".pdf,.txt"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void importResume(f);
-                e.target.value = "";
-              }}
-            />
-          </div>
-        </div>
-        <ProfileEditor profile={profile} onChange={setProfile} />
-        <Button variant="primary" onClick={saveProfile} disabled={!profile}>
-          Save profile
-        </Button>
-      </section>
+          </section>
 
-      <section className="op-section">
-        <h2 className="op-section-title">Privacy</h2>
-        <Card>
-          <p className="op-note">
-            Veya runs locally by default. With a local provider (Ollama, LM Studio) your profile and the pages you fill
-            never leave your machine. With a cloud provider, only the prompt needed to answer is sent to that provider —
-            no tracking, no Veya backend, no telemetry.
-          </p>
-        </Card>
-      </section>
+          <section className="op-section">
+            <h2 className="op-section-title">Privacy</h2>
+            <Card>
+              <p className="op-note">
+                Veya runs locally by default. With a local provider (Ollama, LM Studio) your profile and the pages you
+                fill never leave your machine. With a cloud provider, only the prompt needed to answer is sent to that
+                provider — no tracking, no Veya backend, no telemetry.
+              </p>
+            </Card>
+          </section>
+        </>
+      ) : null}
     </div>
   );
 }
