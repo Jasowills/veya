@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Veya",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Your career, already understood. A privacy-first AI assistant for job applications.",
   "permissions": ["storage", "activeTab", "scripting", "sidePanel"],
   "optional_host_permissions": ["<all_urls>"],
