@@ -265,6 +265,17 @@ export function SidePanel() {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, [refreshAll]);
 
+  // Auto-refresh when storage changes (user saved profile/provider in Options)
+  useEffect(() => {
+    const onChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
+      if (changes["veya.config.v1"] || changes["veya.profile.v1"]) {
+        refreshAll();
+      }
+    };
+    chrome.storage.onChanged.addListener(onChange);
+    return () => chrome.storage.onChanged.removeListener(onChange);
+  }, [refreshAll]);
+
   const requestPermissions = useCallback(async () => {
     try {
       const result = await send<{ granted: boolean }>({ kind: "requestPermissions" });

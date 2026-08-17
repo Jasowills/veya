@@ -27,6 +27,7 @@ interface Draft {
   phone: string;
   city: string;
   linkedinUrl: string;
+  githubUrl: string;
   websiteUrl: string;
   skills: string[];
   experience: ExpDraft[];
@@ -41,6 +42,7 @@ function draftFromProfile(p: CareerProfile): Draft {
     phone: p.contact?.phone ?? "",
     city: p.contact?.city ?? "",
     linkedinUrl: p.contact?.linkedinUrl ?? "",
+    githubUrl: p.contact?.githubUrl ?? "",
     websiteUrl: p.contact?.websiteUrl ?? "",
     skills: p.skills.map((s) => s.name),
     experience: p.experience.map((e) => ({
@@ -67,6 +69,7 @@ function draftToProfile(d: Draft, seed: CareerProfile): CareerProfile {
         phone: d.phone.trim() || undefined,
         city: d.city.trim() || undefined,
         linkedinUrl: d.linkedinUrl.trim() || undefined,
+        githubUrl: d.githubUrl.trim() || undefined,
         websiteUrl: d.websiteUrl.trim() || undefined,
       }
     : undefined;
@@ -272,6 +275,24 @@ export function SetupWizard({ onDone, onSkip }: { onDone: () => void; onSkip: ()
                   value={draft.linkedinUrl}
                   placeholder="linkedin.com/in/…"
                   onChange={(e) => setDraft({ ...draft, linkedinUrl: e.target.value })}
+                />
+              </label>
+              <label className="sw-field">
+                <span className="sw-label">GitHub</span>
+                <input
+                  className={`sw-input${draft.githubUrl ? "" : " sw-input--empty"}`}
+                  value={draft.githubUrl}
+                  placeholder="github.com/…"
+                  onChange={(e) => setDraft({ ...draft, githubUrl: e.target.value })}
+                />
+              </label>
+              <label className="sw-field">
+                <span className="sw-label">Website</span>
+                <input
+                  className={`sw-input${draft.websiteUrl ? "" : " sw-input--empty"}`}
+                  value={draft.websiteUrl}
+                  placeholder="yoursite.com"
+                  onChange={(e) => setDraft({ ...draft, websiteUrl: e.target.value })}
                 />
               </label>
             </div>
