@@ -2,9 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Wordmark } from "@veya/shared";
 import type { CareerProfile } from "@veya/profile";
 import type { Request, Response, RuntimeConfig } from "../shared/messages.js";
-import { Button, Card } from "../ui/components.js";
-import { mergeResumeIntoProfile, resumeFileToProfile } from "../shared/resume.js";
-import { ProfileEditor } from "./ProfileEditor.js";
+import { Button } from "../ui/components.js";
+import { ProfileSection } from "./ProfileSection.js";
 
 const PROVIDERS: Array<{ id: RuntimeConfig["provider"]; name: string; needsKey: boolean; defaultBase?: string }> = [
   { id: "ollama", name: "Ollama (local)", needsKey: false, defaultBase: "http://localhost:11434" },
@@ -38,7 +37,6 @@ export function Options() {
   const [notice, setNotice] = useState<string | null>(null);
   const [wasConfigured, setWasConfigured] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const resumeRef = useRef<HTMLInputElement>(null);
   const [resumeBusy, setResumeBusy] = useState(false);
 
   useEffect(() => {
@@ -119,23 +117,6 @@ export function Options() {
       setTimeout(() => setNotice(null), 3000);
     },
     [loadProfile],
-  );
-
-  const importResume = useCallback(
-    async (file: File) => {
-      setResumeBusy(true);
-      try {
-        const seed = await resumeFileToProfile(file);
-        setProfile((prev) => (prev ? mergeResumeIntoProfile(prev, seed) : seed));
-        setNotice("Resume parsed — review the career profile fields below, then save.");
-      } catch (e) {
-        setNotice(`Could not read resume: ${(e as Error).message}`);
-      } finally {
-        setResumeBusy(false);
-      }
-      setTimeout(() => setNotice(null), 6000);
-    },
-    [],
   );
 
   const provider = PROVIDERS.find((pr) => pr.id === config.provider);
@@ -235,61 +216,12 @@ export function Options() {
 
       {/* ── Profile section — only after provider is saved ──────── */}
       {wasConfigured ? (
-        <>
-          <section className="op-section">
-            <div className="op-row" style={{ justifyContent: "space-between" }}>
-              <h2 className="op-section-title">Career profile</h2>
-              <div className="op-row" style={{ gap: 8 }}>
-                <Button variant="ghost" size="sm" onClick={exportProfile}>
-                  Export
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => fileRef.current?.click()}>
-                  Import
-                </Button>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="application/json"
-                  style={{ display: "none" }}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) void importProfile(f);
-                    e.target.value = "";
-                  }}
-                />
-                <Button variant="ghost" size="sm" onClick={() => resumeRef.current?.click()} loading={resumeBusy}>
-                  {resumeBusy ? "Parsing…" : "From resume"}
-                </Button>
-                <input
-                  ref={resumeRef}
-                  type="file"
-                  accept=".pdf,.txt"
-                  style={{ display: "none" }}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) void importResume(f);
-                    e.target.value = "";
-                  }}
-                />
-              </div>
-            </div>
-            <ProfileEditor profile={profile} onChange={setProfile} />
-            <Button variant="primary" onClick={saveProfile} disabled={!profile}>
-              Save profile
-            </Button>
-          </section>
-
-          <section className="op-section">
-            <h2 className="op-section-title">Privacy</h2>
-            <Card>
-              <p className="op-note">
-                Veya runs locally by default. With a local provider (Ollama, LM Studio) your profile and the pages you
-                fill never leave your machine. With a cloud provider, only the prompt needed to answer is sent to that
-                provider — no tracking, no Veya backend, no telemetry.
-              </p>
-            </Card>
-          </section>
-        </>
+        <ProfileSection
+          profile={profile}
+          onChange={setProfile}
+          onSave={saveProfile}
+          onNotice={setNotice}
+        />
       ) : null}
     </div>
   );

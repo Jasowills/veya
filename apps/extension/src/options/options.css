@@ -95,3 +95,94 @@
   color: var(--veya-text-secondary);
   line-height: 1.55;
 }
+
+/* ── Resume drop zone ─────────────────────────────────────────── */
+.op-resume-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 20px !important;
+  gap: 12px;
+  border-style: dashed !important;
+}
+
+.op-resume-drop-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--veya-text);
+}
+
+/* ── Profile summary cards ────────────────────────────────────── */
+.pe-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pe-summary-label {
+  font-size: 11px;
+  font-family: var(--veya-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--veya-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.pe-summary-value {
+  font-size: 14px;
+  color: var(--veya-text);
+  font-weight: 500;
+}
+
+.pe-summary-detail {
+  font-size: 12px;
+  color: var(--veya-text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Experience rows inside summary ───────────────────────────── */
+.pe-exp-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 0;
+}
+
+.pe-exp-row + .pe-exp-row {
+  border-top: 1px solid var(--veya-border);
+}
+
+.pe-exp-main {
+  font-size: 13px;
+  color: var(--veya-text);
+}
+
+.pe-exp-title {
+  font-weight: 500;
+}
+
+.pe-exp-company {
+  color: var(--veya-text-secondary);
+}
+
+.pe-exp-meta {
+  font-size: 11px;
+  color: var(--veya-text-tertiary);
+}
+
+/* ── Skill chips ──────────────────────────────────────────────── */
+.pe-skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pe-skill-chip {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: var(--veya-radius-sm);
+  background: var(--veya-surface);
+  border: 1px solid var(--veya-border);
+  color: var(--veya-text-secondary);
+}
