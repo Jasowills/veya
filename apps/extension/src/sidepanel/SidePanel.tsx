@@ -138,7 +138,6 @@ function Onboarding({
   return (
     <div className="onb-root">
       <div className="onb-hero">
-        <Wordmark size={18} />
         <h1 className="onb-title">Welcome.</h1>
         <p className="onb-sub">Let's get Veya ready.</p>
       </div>
