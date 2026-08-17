@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "Your career, already understood. A privacy-first AI assistant for job applications.",
   "permissions": ["storage", "activeTab", "scripting", "sidePanel"],
+  "optional_host_permissions": ["<all_urls>"],
   "host_permissions": ["http://localhost:11434/*", "https://localhost:11434/*"],
   "action": {
     "default_title": "Open Veya",

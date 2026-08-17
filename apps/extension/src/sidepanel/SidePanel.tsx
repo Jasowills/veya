@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brand, Wordmark } from "@veya/shared";
 import type { CareerProfile } from "@veya/profile";
 import type { GenerateOutcome, PlanEntry, Request, Response, ScanState } from "../shared/messages.js";
@@ -6,7 +6,8 @@ import { Button, Card, EmptyState, Pill, Spinner, type StatusTone } from "../ui/
 import { isProfileSet } from "../shared/resume.js";
 import { SetupWizard } from "./setup-wizard.js";
 
-type Status = { provider: string; model?: string; healthy: boolean } | null;
+type Status = { provider: string; model?: string; healthy: boolean; configured: boolean } | null;
+type Permissions = { granted: boolean; origins: string[] } | null;
 
 function send<T>(msg: Request): Promise<T> {
   return new Promise<T>((resolve, reject) => {
@@ -49,8 +50,176 @@ function GearIcon({ size = 14 }: { size?: number }) {
   );
 }
 
+function CheckIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function XIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+/* ─── Inline error banner ──────────────────────────────────────────── */
+
+function ErrorBanner({ type, message, onGrant, onRetry, onDismiss }: {
+  type: "permission" | "noForm" | "generic";
+  message?: string;
+  onGrant?: () => void;
+  onRetry?: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div className={`sp-banner sp-banner--${type === "permission" ? "warn" : "danger"}`}>
+      <div className="sp-banner-text">
+        {type === "permission" ? (
+          <>
+            <strong>Page access needed.</strong> Veya can't read forms on this site yet.
+          </>
+        ) : type === "noForm" ? (
+          <>
+            <strong>No form found.</strong> Navigate to a job application page.
+          </>
+        ) : (
+          <strong>{message ?? "Something went wrong."}</strong>
+        )}
+      </div>
+      <div className="sp-banner-actions">
+        {type === "permission" && onGrant ? (
+          <Button variant="ghost" size="sm" onClick={onGrant}>Grant access</Button>
+        ) : null}
+        {onRetry ? (
+          <Button variant="ghost" size="sm" onClick={onRetry}>Retry</Button>
+        ) : null}
+        <button type="button" className="sp-banner-close" onClick={onDismiss} aria-label="Dismiss">
+          <XIcon size={12} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Onboarding screen ────────────────────────────────────────────── */
+
+type OnboardingStep = "provider" | "profile" | "permissions";
+
+function Onboarding({
+  status,
+  profileSet,
+  permissions,
+  onProfileDone,
+  onRequestPermissions,
+}: {
+  status: Status;
+  profileSet: boolean;
+  permissions: Permissions;
+  onProfileDone: () => void;
+  onRequestPermissions: () => void;
+}) {
+  const [step, setStep] = useState<OnboardingStep>("provider");
+
+  const providerDone = status?.configured === true;
+  const profileDone = profileSet;
+  const permsDone = permissions?.granted === true;
+
+  useEffect(() => {
+    if (!providerDone) setStep("provider");
+    else if (!profileDone) setStep("profile");
+    else if (!permsDone) setStep("permissions");
+  }, [providerDone, profileDone, permsDone]);
+
+  return (
+    <div className="onb-root">
+      <div className="onb-hero">
+        <Wordmark size={18} />
+        <h1 className="onb-title">Welcome.</h1>
+        <p className="onb-sub">Let's get Veya ready.</p>
+      </div>
+
+      {/* Step 1: Provider */}
+      <div className={`onb-step${step === "provider" ? " onb-step--active" : providerDone ? " onb-step--done" : ""}`}>
+        <div className="onb-step-head">
+          <span className={`onb-step-num${providerDone ? " onb-step-num--done" : ""}`}>
+            {providerDone ? <CheckIcon size={12} /> : "1"}
+          </span>
+          <span className="onb-step-label">Choose your AI provider</span>
+        </div>
+        {step === "provider" && !providerDone ? (
+          <div className="onb-step-body">
+            <p className="onb-step-detail">
+              Veya uses an AI model to draft answers. Pick a local model (Ollama) or bring your own API key.
+            </p>
+            <Button variant="primary" full onClick={() => void chrome.runtime.openOptionsPage()}>
+              Set up provider
+            </Button>
+            <p className="onb-step-hint">Configure in Settings, then come back — this step advances automatically.</p>
+          </div>
+        ) : null}
+      </div>
+
+      {/* Step 2: Profile */}
+      <div className={`onb-step${step === "profile" ? " onb-step--active" : profileDone ? " onb-step--done" : ""}`}>
+        <div className="onb-step-head">
+          <span className={`onb-step-num${profileDone ? " onb-step-num--done" : ""}`}>
+            {profileDone ? <CheckIcon size={12} /> : "2"}
+          </span>
+          <span className="onb-step-label">Set up your profile</span>
+        </div>
+        {step === "profile" && !profileDone ? (
+          <div className="onb-step-body onb-step-body--flush">
+            <SetupWizard onDone={onProfileDone} onSkip={onProfileDone} />
+          </div>
+        ) : null}
+      </div>
+
+      {/* Step 3: Permissions */}
+      <div className={`onb-step${step === "permissions" ? " onb-step--active" : permsDone ? " onb-step--done" : ""}`}>
+        <div className="onb-step-head">
+          <span className={`onb-step-num${permsDone ? " onb-step-num--done" : ""}`}>
+            {permsDone ? <CheckIcon size={12} /> : "3"}
+          </span>
+          <span className="onb-step-label">Page access</span>
+        </div>
+        {step === "permissions" && !permsDone ? (
+          <div className="onb-step-body">
+            <p className="onb-step-detail">
+              Veya needs permission to read job application forms on any site. Chrome will ask you to confirm.
+            </p>
+            <Button variant="primary" full onClick={onRequestPermissions}>
+              Grant access
+            </Button>
+          </div>
+        ) : null}
+      </div>
+
+      {/* Status message */}
+      {providerDone && profileDone ? (
+        <div className="onb-ready">
+          {permsDone ? (
+            <p className="onb-ready-text">Veya is ready. Open a job page and click Analyze.</p>
+          ) : (
+            <p className="onb-ready-text">
+              You can skip page access for now — Veya will ask when you first analyze a page.
+            </p>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/* ─── Main SidePanel ────────────────────────────────────────────────── */
+
 export function SidePanel() {
   const [status, setStatus] = useState<Status>(null);
+  const [permissions, setPermissions] = useState<Permissions>(null);
   const [scan, setScan] = useState<ScanState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,16 +227,54 @@ export function SidePanel() {
   const [drafting, setDrafting] = useState<string | null>(null);
   const [profileReady, setProfileReady] = useState(false);
   const [profileSet, setProfileSet] = useState(false);
+  const didInit = useRef(false);
 
-  useEffect(() => {
+  const refreshStatus = useCallback(() => {
     void send<Status>({ kind: "status" }).then(setStatus).catch(() => setStatus(null));
+  }, []);
+
+  const refreshPermissions = useCallback(() => {
+    void send<Permissions>({ kind: "checkPermissions" }).then(setPermissions).catch(() => setPermissions(null));
+  }, []);
+
+  const refreshAll = useCallback(() => {
+    refreshStatus();
+    refreshPermissions();
     void send<CareerProfile>({ kind: "getProfile" })
       .then((p) => {
         setProfileSet(isProfileSet(p));
         setProfileReady(true);
       })
       .catch(() => setProfileReady(true));
-  }, []);
+  }, [refreshStatus, refreshPermissions]);
+
+  // Initial load
+  useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
+    refreshAll();
+  }, [refreshAll]);
+
+  // Auto-refresh when the side panel becomes visible (user returns from Options)
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        refreshAll();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [refreshAll]);
+
+  const requestPermissions = useCallback(async () => {
+    try {
+      const result = await send<{ granted: boolean }>({ kind: "requestPermissions" });
+      refreshPermissions();
+      return result.granted;
+    } catch {
+      return false;
+    }
+  }, [refreshPermissions]);
 
   const analyze = useCallback(async () => {
     setBusy(true);
@@ -77,7 +284,14 @@ export function SidePanel() {
       const s = await send<ScanState>({ kind: "scan" });
       setScan(s);
     } catch (e) {
-      setError((e as Error).message);
+      const msg = (e as Error).message;
+      if (msg.includes("permission") || msg.includes("Cannot access")) {
+        setError("permission");
+      } else if (msg.includes("No active tab") || msg.includes("No form")) {
+        setError("noForm");
+      } else {
+        setError(msg);
+      }
     } finally {
       setBusy(false);
     }
@@ -145,6 +359,10 @@ export function SidePanel() {
     [scan],
   );
 
+  const configured = status?.configured === true;
+
+  const errorType = error === "permission" ? "permission" : error === "noForm" ? "noForm" : error ? "generic" : null;
+
   return (
     <div className="sp-root">
       <header className="sp-header">
@@ -152,10 +370,12 @@ export function SidePanel() {
           <Wordmark size={15} />
         </span>
         <span className="sp-header-right">
-          <span className={`sp-status ${status?.healthy ? "sp-online" : "sp-offline"}`}>
-            {status?.provider ?? "provider"}
-            {status?.model ? ` · ${status.model}` : ""}
-          </span>
+          {configured ? (
+            <span className={`sp-status ${status?.healthy ? "sp-online" : "sp-offline"}`}>
+              {status?.provider ?? "provider"}
+              {status?.model ? ` · ${status.model}` : ""}
+            </span>
+          ) : null}
           <button
             type="button"
             className="sp-settings"
@@ -168,19 +388,37 @@ export function SidePanel() {
         </span>
       </header>
 
-      {error ? <div className="sp-error">{error}</div> : null}
+      {/* Inline error banner — dismissible, sits above content */}
+      {errorType ? (
+        <ErrorBanner
+          type={errorType}
+          message={errorType === "generic" ? (error ?? undefined) : undefined}
+          onGrant={errorType === "permission" ? requestPermissions : undefined}
+          onRetry={analyze}
+          onDismiss={() => setError(null)}
+        />
+      ) : null}
 
       {!scan ? (
         profileReady ? (
-          profileSet ? (
+          !configured || !profileSet ? (
+            <Onboarding
+              status={status}
+              profileSet={profileSet}
+              permissions={permissions}
+              onProfileDone={() => {
+                setProfileSet(true);
+                refreshStatus();
+              }}
+              onRequestPermissions={requestPermissions}
+            />
+          ) : (
             <Card>
               <EmptyState
                 title="No application analyzed yet"
                 detail="Open a job application page, then analyze it. Veya reads the form locally — nothing leaves your device unless you choose a cloud model."
               />
             </Card>
-          ) : (
-            <SetupWizard onDone={() => setProfileSet(true)} onSkip={() => setProfileSet(true)} />
           )
         ) : (
           <div className="sp-loading">
@@ -239,11 +477,13 @@ export function SidePanel() {
         </>
       )}
 
-      <div className="sp-actions">
-        <Button variant="secondary" full onClick={analyze} disabled={busy} loading={busy}>
-          {scan ? "Re-analyze" : "Analyze this page"}
-        </Button>
-      </div>
+      {configured && profileSet && (
+        <div className="sp-actions">
+          <Button variant="secondary" full onClick={analyze} disabled={busy} loading={busy}>
+            {scan ? "Re-analyze" : "Analyze this page"}
+          </Button>
+        </div>
+      )}
 
       {scan && (
         <div className="sp-footer">

@@ -58,6 +58,17 @@ function educationFromLine(line: string): Education {
       honors: [],
     };
   }
+  // Handle "Course Name Year" format (e.g. "CS50: Introduction to Computer Science 2026")
+  const yearAtEnd = rest.match(/^(.+?)\s+(\d{4})$/);
+  if (yearAtEnd && yearAtEnd[1] && yearAtEnd[2]) {
+    return {
+      id,
+      institution: yearAtEnd[1].replace(/:$/, "").trim(),
+      startYear: yearAtEnd[2],
+      endYear: yearAtEnd[2],
+      honors: [],
+    };
+  }
   return { id, institution: rest, startYear: years?.[1], endYear: years?.[2], honors: [] };
 }
 

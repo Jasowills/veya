@@ -49,6 +49,19 @@ export interface ScanState {
   plan: PlanEntry[];
 }
 
+/** A short user-written note attached to an analyzed application page. */
+export interface Note {
+  id: string;
+  text: string;
+  url: string;
+  role?: string;
+  company?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export type NoteInput = Omit<Note, "id" | "createdAt" | "updatedAt"> & { id?: string };
+
 /** Messages from the UI → background. */
 export type Request =
   | { kind: "scan" }
@@ -57,11 +70,16 @@ export type Request =
   | { kind: "decide"; field: DetectedField }
   | { kind: "generate"; field: DetectedField; tone?: string }
   | { kind: "status" }
+  | { kind: "checkPermissions" }
+  | { kind: "requestPermissions" }
   | { kind: "openOptions" }
   | { kind: "getProfile" }
   | { kind: "saveProfile"; profile: CareerProfile }
   | { kind: "exportProfile" }
-  | { kind: "importProfile"; json: string };
+  | { kind: "importProfile"; json: string }
+  | { kind: "getNotes" }
+  | { kind: "saveNote"; note: NoteInput }
+  | { kind: "deleteNote"; id: string };
 
 export type Response =
   | { ok: true; result: unknown }

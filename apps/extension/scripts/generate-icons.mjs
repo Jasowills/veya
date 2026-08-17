@@ -26,7 +26,7 @@ try {
 const page = await browser.newPage();
 
 for (const size of SIZES) {
-  const html = `<!doctype html><html><head><style>html,body{margin:0;padding:0;background:transparent;width:${size}px;height:${size}px;overflow:hidden}svg{display:block;width:${size}px;height:${size}px}</style></head><body>${mark}</body></html>`;
+  const html = `<!doctype html><html><head><style>html,body{margin:0;padding:0;background:#17140e;width:${size}px;height:${size}px;overflow:hidden}svg{display:block;width:${size}px;height:${size}px}</style></head><body>${mark}</body></html>`;
   await page.setViewportSize({ width: size, height: size });
   await page.setContent(html);
   await page.screenshot({ path: resolve(outDir, `icon-${size}.png`) });

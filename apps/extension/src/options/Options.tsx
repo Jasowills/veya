@@ -27,9 +27,11 @@ function send<T>(msg: Request): Promise<T> {
   });
 }
 
+type Status = { provider: string; model?: string; healthy: boolean; configured: boolean } | null;
+
 export function Options() {
   const [config, setConfig] = useState<RuntimeConfig>({ provider: "ollama", model: "" });
-  const [status, setStatus] = useState<{ provider: string; model?: string; healthy: boolean } | null>(null);
+  const [status, setStatus] = useState<Status>(null);
   const [profile, setProfile] = useState<CareerProfile | null>(null);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export function Options() {
 
   const refreshStatus = useCallback(async () => {
     try {
-      const s = await send<{ provider: string; model?: string; healthy: boolean }>({ kind: "status" });
+      const s = await send<Status>({ kind: "status" });
       setStatus(s);
     } catch {
       setStatus(null);
@@ -146,12 +148,12 @@ export function Options() {
 
       {notice ? <div className="op-status">{notice}</div> : null}
 
-      {status ? (
+      {status?.configured ? (
         <div className={`op-status ${status.healthy ? "op-healthy" : "op-down"}`}>
           {status.healthy ? `Connected to ${status.provider}${status.model ? ` · ${status.model}` : ""}` : `${status.provider} is unreachable`}
         </div>
       ) : (
-        <div className="op-status op-down">Checking provider…</div>
+        <div className="op-status op-down">Choose a provider and save to connect.</div>
       )}
 
       <section className="op-section">

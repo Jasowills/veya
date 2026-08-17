@@ -110,6 +110,10 @@ async function handle(req: Request): Promise<unknown> {
       return generateAnswer(req.field, req.tone);
     case "status":
       return getStatus();
+    case "checkPermissions":
+      return checkHostPermissions();
+    case "requestPermissions":
+      return requestHostPermissions();
     case "openOptions":
       await chrome.runtime.openOptionsPage();
       return "ok";
@@ -194,8 +198,14 @@ async function buildSettings(): Promise<{ config: RuntimeConfig; provider: Retur
   return { config, provider };
 }
 
-async function getStatus(): Promise<{ provider: string; model: string | undefined; healthy: boolean }> {
+async function isConfigured(): Promise<boolean> {
+  const stored = await storage.get<RuntimeConfig>("veya.config.v1");
+  return !!stored;
+}
+
+async function getStatus(): Promise<{ provider: string; model: string | undefined; healthy: boolean; configured: boolean }> {
   const { config, provider } = await buildSettings();
+  const configured = await isConfigured();
   let healthy = false;
   try {
     const models = await provider.listModels();
@@ -203,5 +213,22 @@ async function getStatus(): Promise<{ provider: string; model: string | undefine
   } catch {
     healthy = false;
   }
-  return { provider: providerMeta(config.provider as never)?.name ?? config.provider, model: config.model, healthy };
+  return { provider: providerMeta(config.provider as never)?.name ?? config.provider, model: config.model, healthy, configured };
+}
+
+async function checkHostPermissions(): Promise<{ granted: boolean; origins: string[] }> {
+  const origins = await chrome.permissions.getAll();
+  return {
+    granted: (origins.origins ?? []).includes("<all_urls>"),
+    origins: origins.origins ?? [],
+  };
+}
+
+async function requestHostPermissions(): Promise<{ granted: boolean }> {
+  try {
+    const granted = await chrome.permissions.request({ origins: ["<all_urls>"] });
+    return { granted };
+  } catch {
+    return { granted: false };
+  }
 }
