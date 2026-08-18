@@ -13,7 +13,14 @@
   transition:
     background var(--veya-motion-fast) var(--veya-motion-ease),
     border-color var(--veya-motion-fast) var(--veya-motion-ease),
-    color var(--veya-motion-fast) var(--veya-motion-ease);
+    color var(--veya-motion-fast) var(--veya-motion-ease),
+    box-shadow var(--veya-motion-fast) var(--veya-motion-ease);
+}
+
+.v-btn:focus-visible {
+  outline: 2px solid var(--veya-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--veya-accent) 20%, transparent);
 }
 
 .v-btn--sm {

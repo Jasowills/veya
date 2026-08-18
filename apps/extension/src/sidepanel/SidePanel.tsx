@@ -136,7 +136,7 @@ function Onboarding({
   }, [providerDone, profileDone, permsDone]);
 
   return (
-    <div className="onb-root">
+    <div className="onb-root" role="region" aria-label="Setup wizard">
       <div className="onb-hero">
         <h1 className="onb-title">Welcome.</h1>
         <p className="onb-sub">Let's get Veya ready.</p>
@@ -155,7 +155,7 @@ function Onboarding({
             <p className="onb-step-detail">
               Veya uses an AI model to draft answers. Pick a local model (Ollama) or bring your own API key.
             </p>
-            <Button variant="primary" full onClick={() => void chrome.runtime.openOptionsPage()}>
+            <Button variant="primary" full onClick={() => void chrome.runtime.openOptionsPage()} aria-label="Open settings to configure your AI provider">
               Set up provider
             </Button>
             <p className="onb-step-hint">Configure in Settings, then come back — this step advances automatically.</p>
@@ -191,7 +191,7 @@ function Onboarding({
             <p className="onb-step-detail">
               Veya needs permission to read job application forms on any site. Chrome will ask you to confirm.
             </p>
-            <Button variant="primary" full onClick={onRequestPermissions}>
+            <Button variant="primary" full onClick={onRequestPermissions} aria-label="Grant Veya permission to read job application forms">
               Grant access
             </Button>
           </div>
@@ -489,7 +489,7 @@ export function SidePanel() {
 
       {configured && profileSet && (
         <div className="sp-actions">
-          <Button variant="secondary" full onClick={analyze} disabled={busy} loading={busy}>
+          <Button variant="secondary" full onClick={analyze} disabled={busy} loading={busy} aria-label={scan ? "Re-analyze this page for form fields" : "Analyze this page for job application form fields"}>
             {scan ? "Re-analyze" : "Analyze this page"}
           </Button>
         </div>
@@ -508,7 +508,7 @@ export function SidePanel() {
               input.
             </div>
           )}
-          <Button variant="primary" full onClick={fill} disabled={busy || totalFillable === 0} loading={busy}>
+          <Button variant="primary" full onClick={fill} disabled={busy || totalFillable === 0} loading={busy} aria-label={`Fill ${totalFillable} form field${totalFillable === 1 ? "" : "s"} with your profile data`}>
             {`Fill ${totalFillable} field${totalFillable === 1 ? "" : "s"}`}
           </Button>
         </div>

@@ -55,6 +55,11 @@
   border-color: transparent;
 }
 
+.op-input:focus-visible,
+.op-select:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--veya-accent) 15%, transparent);
+}
+
 .op-row {
   display: flex;
   align-items: center;

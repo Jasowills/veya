@@ -5,14 +5,21 @@ import type { Request, Response, RuntimeConfig } from "../shared/messages.js";
 import { Button } from "../ui/components.js";
 import { ProfileSection } from "./ProfileSection.js";
 
-const PROVIDERS: Array<{ id: RuntimeConfig["provider"]; name: string; needsKey: boolean; defaultBase?: string }> = [
-  { id: "ollama", name: "Ollama (local)", needsKey: false, defaultBase: "http://localhost:11434" },
-  { id: "openai", name: "OpenAI", needsKey: true },
-  { id: "anthropic", name: "Anthropic", needsKey: true },
-  { id: "gemini", name: "Google Gemini", needsKey: true },
-  { id: "openrouter", name: "OpenRouter", needsKey: true },
-  { id: "groq", name: "Groq", needsKey: true },
-  { id: "lmstudio", name: "LM Studio (local)", needsKey: false, defaultBase: "http://localhost:1234/v1" },
+const PROVIDERS: Array<{
+  id: RuntimeConfig["provider"];
+  name: string;
+  description: string;
+  needsKey: boolean;
+  defaultBase?: string;
+  group: "local" | "cloud";
+}> = [
+  { id: "ollama", name: "Ollama", description: "Free, private, runs on your computer", needsKey: false, defaultBase: "http://localhost:11434", group: "local" },
+  { id: "lmstudio", name: "LM Studio", description: "Free, private, runs on your computer", needsKey: false, defaultBase: "http://localhost:1234/v1", group: "local" },
+  { id: "openai", name: "OpenAI", description: "GPT-4o, GPT-4o-mini — requires API key", needsKey: true, group: "cloud" },
+  { id: "anthropic", name: "Anthropic", description: "Claude — requires API key", needsKey: true, group: "cloud" },
+  { id: "gemini", name: "Google Gemini", description: "Gemini Pro — requires API key", needsKey: true, group: "cloud" },
+  { id: "openrouter", name: "OpenRouter", description: "Access multiple models — requires API key", needsKey: true, group: "cloud" },
+  { id: "groq", name: "Groq", description: "Fast inference — requires API key", needsKey: true, group: "cloud" },
 ];
 
 function send<T>(msg: Request): Promise<T> {
@@ -121,6 +128,8 @@ export function Options() {
 
   const provider = PROVIDERS.find((pr) => pr.id === config.provider);
   const isFirstTime = !wasConfigured;
+  const localProviders = PROVIDERS.filter((p) => p.group === "local");
+  const cloudProviders = PROVIDERS.filter((p) => p.group === "cloud");
 
   return (
     <div className="op-root">
@@ -142,8 +151,8 @@ export function Options() {
       ) : null}
 
       {/* ── Provider section — always visible ─────────────────────── */}
-      <section className="op-section">
-        <h2 className="op-section-title">Model provider</h2>
+      <section className="op-section" aria-labelledby="provider-heading">
+        <h2 className="op-section-title" id="provider-heading">Model provider</h2>
         <div className="op-field">
           <label className="op-field-label" htmlFor="provider">
             Provider
@@ -152,14 +161,29 @@ export function Options() {
             id="provider"
             className="op-select"
             value={config.provider}
+            aria-describedby="provider-hint"
             onChange={(e) => setConfig({ ...config, provider: e.target.value as RuntimeConfig["provider"] })}
           >
-            {PROVIDERS.map((pr) => (
-              <option key={pr.id} value={pr.id}>
-                {pr.name}
-              </option>
-            ))}
+            <optgroup label="Local (free, private)">
+              {localProviders.map((pr) => (
+                <option key={pr.id} value={pr.id}>
+                  {pr.name} — {pr.description}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Cloud (requires API key)">
+              {cloudProviders.map((pr) => (
+                <option key={pr.id} value={pr.id}>
+                  {pr.name} — {pr.description}
+                </option>
+              ))}
+            </optgroup>
           </select>
+          <p className="op-note" id="provider-hint">
+            {provider?.group === "local"
+              ? "Runs on your machine. Your data never leaves your computer."
+              : "Your profile stays in this browser. Only the prompt is sent to the provider."}
+          </p>
         </div>
 
         {provider?.needsKey ? (
@@ -173,9 +197,10 @@ export function Options() {
               className="op-input"
               value={config.apiKey ?? ""}
               placeholder="sk-…"
+              aria-describedby="api-key-hint"
               onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
             />
-            <p className="op-note">
+            <p className="op-note" id="api-key-hint">
               Stored locally in your browser. Veya never transmits it anywhere except the provider's own API.
             </p>
           </div>
@@ -189,8 +214,14 @@ export function Options() {
               className="op-input"
               value={config.baseUrl ?? provider?.defaultBase ?? ""}
               placeholder={provider?.defaultBase}
+              aria-describedby="base-url-hint"
               onChange={(e) => setConfig({ ...config, baseUrl: e.target.value })}
             />
+            <p className="op-note" id="base-url-hint">
+              {provider?.id === "ollama"
+                ? "Default: http://localhost:11434 — change only if Ollama runs elsewhere."
+                : "Default: http://localhost:1234/v1 — change only if LM Studio runs elsewhere."}
+            </p>
           </div>
         )}
 
@@ -203,12 +234,18 @@ export function Options() {
             className="op-input"
             value={config.model ?? ""}
             placeholder={config.provider === "ollama" ? "qwen2.5:7b" : "e.g. gpt-4o-mini"}
+            aria-describedby="model-hint"
             onChange={(e) => setConfig({ ...config, model: e.target.value })}
           />
+          <p className="op-note" id="model-hint">
+            {config.provider === "ollama"
+              ? "Run 'ollama list' in your terminal to see available models."
+              : "Check your provider's docs for available model names."}
+          </p>
         </div>
 
         {isFirstTime ? (
-          <Button variant="primary" full onClick={save} loading={loading}>
+          <Button variant="primary" full onClick={save} loading={loading} aria-label="Save provider configuration and continue">
             {saved ? "Saved — go back to Veya" : "Save provider"}
           </Button>
         ) : null}

@@ -56,10 +56,10 @@ export function ProfileSection({ profile, onChange, onSave, onNotice }: Props) {
               e.target.value = "";
             }}
           />
-          <Button variant="primary" full onClick={() => resumeRef.current?.click()} loading={resumeBusy}>
+          <Button variant="primary" full onClick={() => resumeRef.current?.click()} loading={resumeBusy} aria-label="Upload resume file to automatically extract your career profile">
             {resumeBusy ? "Parsing…" : "Upload resume (PDF or TXT)"}
           </Button>
-          <Button variant="ghost" full onClick={() => setEditing(true)}>
+          <Button variant="secondary" full onClick={() => setEditing(true)} aria-label="Manually enter your career profile details">
             Fill in manually
           </Button>
         </Card>
